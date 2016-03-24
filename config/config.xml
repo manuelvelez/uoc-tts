@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<config>
+    <tts>
+        <url>http://translate.google.com/translate_tts</url>
+    </tts>
+    <reader>
+        <split-mode>PAGE-BREAK</split-mode>
+        <output-pattern>name-%N</output-pattern>
+    </reader>
+</config>

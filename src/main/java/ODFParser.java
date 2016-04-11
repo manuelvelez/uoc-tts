@@ -13,6 +13,34 @@ import org.w3c.dom.NodeList;
 public class ODFParser {
     private String documentName;
     private OdfDocument odfDocument;
+    private String text;
+    private String[] textSplitted;
+
+    public String[] getTextSplitted() {
+        return textSplitted;
+    }
+
+    public void setTextSplitted(String[] textSplitted) {
+        this.textSplitted = textSplitted;
+    }
+
+    public String getText() {
+        return text;
+    }
+
+    public void setText(String text) {
+        this.text = text;
+    }
+
+    @Override
+    public String toString() {
+
+        return "ODFParser{" +
+                "documentName='" + documentName + '\'' +
+                ", text='" + text + '\'' +
+                '}';
+    }
+
     public ODFParser(String documentName) {
         this.documentName = documentName;
 
@@ -29,17 +57,19 @@ public class ODFParser {
             e.printStackTrace();
         }
         NodeList list = content.getRootElement().getElementsByTagName("office:text");
-        this.recurse(list.item(0));
+        text = this.recurse(list.item(0));
+
+        textSplitted = this.text.replaceAll("(.{0,"+ 100+"})\\b", "$1\n").split("\n");
     }
 
-    public static void recurse(Node node){
-        String text = "";
+    public String recurse(Node node){
+        String innerText = "";
+        final String ENDLN = "\n";
         //System.out.println(node.getClass());
         if(node instanceof OdfTextParagraph){
             System.out.println(node.getTextContent());
-            text = text + node.getTextContent();
+            innerText = innerText + node.getTextContent() + ENDLN;
         }
-
 
         else if(node instanceof OdfDrawFrame){
             System.out.println(((OdfDrawFrame) node).getFirstChild().getClass());
@@ -55,7 +85,10 @@ public class ODFParser {
         NodeList nodeList = node.getChildNodes();
         for (int i = 0; i < nodeList.getLength(); i++) {
             Node currentNode = nodeList.item(i);
-            recurse(currentNode);
+            innerText = innerText + recurse(currentNode);
         }
+        //System.out.println(text);
+        return innerText;
     }
+
 }

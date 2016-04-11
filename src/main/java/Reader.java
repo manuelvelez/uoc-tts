@@ -15,21 +15,30 @@ public class Reader {
     public static void main(String[] args) {
         Config setup = new Config("config/config.xml");
 
+        System.out.println(setup.toString());
 
-//        ODFParser parser = new ODFParser("formula.odt");
+        ODFParser parser = new ODFParser("formula.odt");
+        //System.out.println(parser.toString());
 
-//      TTS.Language language = TTS.Language.valueOf("EN".toUpperCase());
-        String text = "hello, i'm the man";
-//        try {
-//            text = URLEncoder.encode(text, "utf-8");
-//        } catch (UnsupportedEncodingException e) {
-//            e.printStackTrace();
-//        }
-//        try {
-//            new TTS().go(language, text);
-//        } catch (Exception e) {
-//            e.printStackTrace();
-//        }
+        System.out.println(parser.getText());
+
+        String test[] = parser.getTextSplitted();
+        for (String s : test) {
+            System.out.println(s.length());
+        }
+
+        TTS.Language language = TTS.Language.valueOf("ES".toUpperCase());
+        String text = "Vane bonita";
+        try {
+            text = URLEncoder.encode(text, "utf-8");
+        } catch (UnsupportedEncodingException e) {
+            e.printStackTrace();
+        }
+        try {
+            new TTS().go(language, text);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
 
 
     }

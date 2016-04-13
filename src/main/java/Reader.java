@@ -27,7 +27,7 @@ public class Reader {
             System.out.println(s.length());
         }
 
-        TTS.Language language = TTS.Language.valueOf("ES".toUpperCase());
+        String language = "ES";
         String text = "Vane bonita";
         try {
             text = URLEncoder.encode(text, "utf-8");
@@ -35,7 +35,7 @@ public class Reader {
             e.printStackTrace();
         }
         try {
-            new TTS().go(language, text);
+            new OnLineTTS().generateAudio(language, text);
         } catch (Exception e) {
             e.printStackTrace();
         }

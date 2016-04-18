@@ -50,18 +50,18 @@ public class Reader {
         Config setup = new Config(configFile);
         ODTParser docParser;
         docParser = new ODTParser(docFile);
-        String test[] = docParser.getTextSplitted();
-        String language = "ES";
-        String text = "Vane bonita";
+        String language = "EN";
+        String text = docParser.getText();
         try {
             text = URLEncoder.encode(text, "utf-8");
         } catch (UnsupportedEncodingException e) {
             e.printStackTrace();
         }
         try {
-            new OnLineTTS().generateAudio(language, text);
+            new OffLineTTS().generateAudio(language, text);
         } catch (Exception e) {
-            e.printStackTrace();
+            System.out.println("[ERROR] Connection not available when online conversion selected");
+            System.exit(1);
         }
 
 

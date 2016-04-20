@@ -33,7 +33,7 @@ public class Config {
 
     public Config(String configFile) {
         this.configFile = configFile;
-
+        System.out.println(this.configFile);
         Document configDocument = null;
         try {
             configDocument = useDOMParser(configFile);

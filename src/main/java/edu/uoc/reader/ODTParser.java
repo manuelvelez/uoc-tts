@@ -59,33 +59,41 @@ public class ODTParser extends ODFParser {
         } catch (Exception e) {
             e.printStackTrace();
         }
+        System.out.println(this.odfDocument.loadSubDocuments());
+        try {
+            System.out.println(this.odfDocument.getMasterPages());
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
         NodeList list = content.getRootElement().getElementsByTagName("office:text");
         text = this.recurse(list.item(0));
-        //System.out.println(text);
+        System.out.println("ESTO ES LO QUE VOY A LEER");
+        System.out.println(text);
         textSplitted = this.text.replaceAll("(.{0,"+ 100+"})\\b", "$1\n").split("\n");
     }
 
     public String recurse(Node node){
         String innerText = "";
         final String ENDLN = "\n";
-        //System.out.println(node.getClass());
+        System.out.println(node.getClass());
 
         if(node instanceof OdfTextParagraph){
             System.out.println(node.getTextContent());
             innerText = innerText + node.getTextContent() + ENDLN;
         }
-        /*
         else if(node instanceof OdfDrawFrame){
             System.out.println(((OdfDrawFrame) node).getFirstChild().getClass());
         }
 
         else if(node instanceof DrawObjectElement){
             System.out.println("link: " + ((DrawObjectElement) node).getXlinkHrefAttribute());
+            System.out.println("path: " + this.odfDocument.getDocumentPath());
         }
+
         else if(node instanceof OdfDrawImage){
             System.out.println(((OdfDrawImage) node).getImageUri());
         }
-*/
+
         NodeList nodeList = node.getChildNodes();
         for (int i = 0; i < nodeList.getLength(); i++) {
             Node currentNode = nodeList.item(i);

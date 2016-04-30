@@ -1,0 +1,27 @@
+<xs:schema attributeFormDefault="unqualified" elementFormDefault="qualified" xmlns:xs="http://www.w3.org/2001/XMLSchema">
+  <xs:element name="config">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element name="tts">
+          <xs:complexType>
+            <xs:sequence>
+              <xs:element type="xs:anyURI" name="url"/>
+              <xs:element type="xs:string" name="online"/>
+              <xs:element type="xs:string" name="language"/>
+            </xs:sequence>
+          </xs:complexType>
+        </xs:element>
+        <xs:element name="reader">
+          <xs:complexType>
+            <xs:sequence>
+              <xs:element type="xs:string" name="split-by"/>
+              <xs:element type="xs:string" name="alternatives"/>
+              <xs:element type="xs:string" name="output-path"/>
+              <xs:element type="xs:string" name="output-pattern"/>
+            </xs:sequence>
+          </xs:complexType>
+        </xs:element>
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+</xs:schema>

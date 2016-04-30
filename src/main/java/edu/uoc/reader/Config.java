@@ -8,27 +8,127 @@ import org.jdom2.Element;
 import org.jdom2.input.DOMBuilder;
 import org.xml.sax.SAXException;
 
+import javax.xml.XMLConstants;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
-
+import javax.xml.transform.stream.StreamSource;
+import javax.xml.validation.Schema;
+import javax.xml.validation.SchemaFactory;
+import javax.xml.validation.Validator;
 import java.io.File;
 import java.io.IOException;
 
 public class Config {
-    private String ttsServiceUrl;
     private String configFile;
-    private String outputAudioPattern;
+
+    private String ttsServiceUrl;
+    private String isOnline;
+    private String language;
+
     private String splitMode;
+    private String alternatives;
+    private String outputAudioPath;
+    private String outputAudioPattern;
+
+    private final String xsdPath = "./config/reader.xsd";
+
+    private Boolean validate(){
+        try {
+            SchemaFactory factory =
+                    SchemaFactory.newInstance(XMLConstants.W3C_XML_SCHEMA_NS_URI);
+            Schema schema = factory.newSchema(new File(xsdPath));
+            Validator validator = schema.newValidator();
+            validator.validate(new StreamSource(new File(this.configFile)));
+        } catch (SAXException e) {
+            System.out.println("Exception: "+e.getMessage());
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        return true;
+    }
 
     @Override
     public String toString() {
         return "Config{" +
-                "ttsServiceUrl='" + ttsServiceUrl + '\'' +
-                ", configFile='" + configFile + '\'' +
-                ", outputAudioPattern='" + outputAudioPattern + '\'' +
+                "configFile='" + configFile + '\'' +
+                ", ttsServiceUrl='" + ttsServiceUrl + '\'' +
+                ", isOnline='" + isOnline + '\'' +
+                ", language='" + language + '\'' +
                 ", splitMode='" + splitMode + '\'' +
+                ", alternatives='" + alternatives + '\'' +
+                ", outputAudioPath='" + outputAudioPath + '\'' +
+                ", outputAudioPattern='" + outputAudioPattern + '\'' +
+                ", xsdPath='" + xsdPath + '\'' +
                 '}';
+    }
+
+    public String getConfigFile() {
+        return configFile;
+    }
+
+    public void setConfigFile(String configFile) {
+        this.configFile = configFile;
+    }
+
+    public String getTtsServiceUrl() {
+        return ttsServiceUrl;
+    }
+
+    public void setTtsServiceUrl(String ttsServiceUrl) {
+        this.ttsServiceUrl = ttsServiceUrl;
+    }
+
+    public String getIsOnline() {
+        return isOnline;
+    }
+
+    public void setIsOnline(String isOnline) {
+        this.isOnline = isOnline;
+    }
+
+    public String getLanguage() {
+        return language;
+    }
+
+    public void setLanguage(String language) {
+        this.language = language;
+    }
+
+    public String getSplitMode() {
+        return splitMode;
+    }
+
+    public void setSplitMode(String splitMode) {
+        this.splitMode = splitMode;
+    }
+
+    public String getAlternatives() {
+        return alternatives;
+    }
+
+    public void setAlternatives(String alternatives) {
+        this.alternatives = alternatives;
+    }
+
+    public String getOutputAudioPath() {
+        return outputAudioPath;
+    }
+
+    public void setOutputAudioPath(String outputAudioPath) {
+        this.outputAudioPath = outputAudioPath;
+    }
+
+    public String getOutputAudioPattern() {
+        return outputAudioPattern;
+    }
+
+    public void setOutputAudioPattern(String outputAudioPattern) {
+        this.outputAudioPattern = outputAudioPattern;
+    }
+
+    public String getXsdPath() {
+        return xsdPath;
     }
 
     public Config(String configFile) {
@@ -44,19 +144,31 @@ public class Config {
         } catch (IOException e) {
             e.printStackTrace();
         }
-        Element elConfig = configDocument.getRootElement();
-        Element ttsElement = elConfig.getChild("tts");
-        Element readerElement = elConfig.getChild("reader");
 
-        String ttsServiceUrl = ttsElement.getChildText("url");
+        if (this.validate() == true)
+        {
+            Element elConfig = configDocument.getRootElement();
+            Element ttsElement = elConfig.getChild("tts");
+            Element readerElement = elConfig.getChild("reader");
 
-        this.setTtsServiceUrl(ttsServiceUrl);
+            //Elements from tts node
+            this.setTtsServiceUrl(ttsElement.getChildText("url"));
+            this.setIsOnline(ttsElement.getChildText("online"));
+            this.setLanguage(ttsElement.getChildText("language"));
 
-        String outputAudioPattern = readerElement.getChildText("output-pattern");
-        String splitMode = readerElement.getChild("split-mode").getText();
 
-        this.setOutputAudioPattern(outputAudioPattern);
-        this.setSplitMode(splitMode);
+            //Elements form reader node
+            this.setSplitMode(readerElement.getChildText("split-by"));
+            this.setAlternatives(readerElement.getChildText("alternatives"));
+            this.setOutputAudioPath(readerElement.getChildText("output-pattern"));
+            this.setOutputAudioPattern(readerElement.getChildText("output-pattern"));
+
+            System.out.println(this.toString());
+        }
+        else{
+            System.exit(1);
+        }
+
     }
 
     //Get JDOM document from DOM Parser
@@ -70,29 +182,5 @@ public class Config {
         DOMBuilder domBuilder = new DOMBuilder();
         return domBuilder.build(doc);
 
-    }
-
-    public String getSplitMode() {
-        return splitMode;
-    }
-
-    public String getOutputAudioPattern() {
-        return outputAudioPattern;
-    }
-
-    public void setSplitMode(String splitMode) {
-        this.splitMode = splitMode;
-    }
-    public void setOutputAudioPattern(String outputAudioPattern) {
-        this.outputAudioPattern = outputAudioPattern;
-    }
-
-    public String getTtsServiceUrl() {
-
-        return ttsServiceUrl;
-    }
-
-    public void setTtsServiceUrl(String ttsServiceUrl) {
-        this.ttsServiceUrl = ttsServiceUrl;
     }
 }

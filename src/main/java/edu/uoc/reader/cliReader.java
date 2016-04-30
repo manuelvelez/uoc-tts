@@ -16,6 +16,8 @@ import java.net.URLEncoder;
 public class cliReader {
     private String configFileName;
     private String odfFileName;
+    private String language;
+
 
     cliReader(String[] args, Options options){
         CommandLineParser parser = new BasicParser();
@@ -25,7 +27,7 @@ public class cliReader {
             cmd = parser.parse(options, args);
             if (cmd.hasOption("config"))
                 this.configFileName = cmd.getOptionValue("config");
-
+  String outputAudioPattern = ;
             if (cmd.hasOption("doc"))
                 this.odfFileName = cmd.getOptionValue("doc");
         } catch (ParseException e) {
@@ -35,13 +37,14 @@ public class cliReader {
         Config setup = new Config(configFileName);
         ODTParser docParser;
         docParser = new ODTParser(odfFileName);
-        String language = "ES";
+        String language = "EN";
         String text = docParser.getText();
+        /*
         try {
             text = URLEncoder.encode(text, "utf-8");
         } catch (UnsupportedEncodingException e) {
             e.printStackTrace();
-        }
+        }*/
         try {
             new espeakTTS().generateAudio(language, text);
         } catch (Exception e) {

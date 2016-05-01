@@ -43,5 +43,7 @@ public class OnLineTTS extends TTS {
         out.write(bufOut.toByteArray());
         out.flush();
         out.close();
+
+        new AudioManager().generateWavFile("output.mp3");
     }
 }

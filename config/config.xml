@@ -2,7 +2,7 @@
 <config>
     <tts>
         <url>http://translate.google.com/translate_tts</url>
-        <online>false</online>
+        <online>true</online>
         <language>EN</language>
     </tts>
     <reader>

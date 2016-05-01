@@ -3,6 +3,7 @@ package edu.uoc.reader;
  * Created by mvelezm on 23/03/16.
  */
 
+import com.sun.org.apache.xpath.internal.operations.Bool;
 import org.jdom2.Document;
 import org.jdom2.Element;
 import org.jdom2.input.DOMBuilder;
@@ -23,7 +24,7 @@ public class Config {
     private String configFile;
 
     private String ttsServiceUrl;
-    private String isOnline;
+    private Boolean isOnline;
     private String language;
 
     private String splitMode;
@@ -79,11 +80,11 @@ public class Config {
         this.ttsServiceUrl = ttsServiceUrl;
     }
 
-    public String getIsOnline() {
+    public Boolean getIsOnline() {
         return isOnline;
     }
 
-    public void setIsOnline(String isOnline) {
+    public void setIsOnline(Boolean isOnline) {
         this.isOnline = isOnline;
     }
 
@@ -153,7 +154,7 @@ public class Config {
 
             //Elements from tts node
             this.setTtsServiceUrl(ttsElement.getChildText("url"));
-            this.setIsOnline(ttsElement.getChildText("online"));
+            this.setIsOnline(Boolean.valueOf(ttsElement.getChildText("online")));
             this.setLanguage(ttsElement.getChildText("language"));
 
 

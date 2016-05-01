@@ -6,7 +6,7 @@
           <xs:complexType>
             <xs:sequence>
               <xs:element type="xs:anyURI" name="url"/>
-              <xs:element type="xs:string" name="online"/>
+              <xs:element type="xs:boolean" name="online"/>
               <xs:element type="xs:string" name="language"/>
             </xs:sequence>
           </xs:complexType>

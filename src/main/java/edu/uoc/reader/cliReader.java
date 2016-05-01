@@ -6,6 +6,7 @@ import org.apache.commons.cli.CommandLineParser;
 import org.apache.commons.cli.ParseException;
 import org.apache.commons.cli.Options;
 
+import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
 
@@ -18,6 +19,24 @@ public class cliReader {
     private String odfFileName;
     private String language;
 
+    public void doOnLineConversion (String text) {
+        try {
+            new OnLineTTS().generateAudio(language, URLEncoder.encode(text, "utf-8"));
+        } catch (UnsupportedEncodingException e) {
+            e.printStackTrace();
+        } catch (IOException e) {
+            e.printStackTrace();
+            System.out.println("[ERROR] Connection not available when online conversion selected");
+        }
+    }
+
+    public void doOfflineConversion (String text) {
+        try {
+            new espeakTTS().generateAudio(language, text);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
 
     cliReader(String[] args, Options options){
         CommandLineParser parser = new BasicParser();
@@ -27,7 +46,6 @@ public class cliReader {
             cmd = parser.parse(options, args);
             if (cmd.hasOption("config"))
                 this.configFileName = cmd.getOptionValue("config");
-  String outputAudioPattern = ;
             if (cmd.hasOption("doc"))
                 this.odfFileName = cmd.getOptionValue("doc");
         } catch (ParseException e) {
@@ -35,22 +53,16 @@ public class cliReader {
         }
 
         Config setup = new Config(configFileName);
-        ODTParser docParser;
-        docParser = new ODTParser(odfFileName);
-        String language = "EN";
+        ODTParser docParser = new ODTParser(odfFileName);
+
+        this.language = setup.getLanguage();
+
         String text = docParser.getText();
-        /*
-        try {
-            text = URLEncoder.encode(text, "utf-8");
-        } catch (UnsupportedEncodingException e) {
-            e.printStackTrace();
-        }*/
-        try {
-            new espeakTTS().generateAudio(language, text);
-        } catch (Exception e) {
-            e.printStackTrace();
-            System.out.println("[ERROR] Connection not available when online conversion selected");
-            System.exit(1);
+        if (setup.getIsOnline()){
+            this.doOnLineConversion(text);
+        }
+        else {
+            this.doOfflineConversion(text);
         }
     }
 }

@@ -18,10 +18,11 @@ public class cliReader {
     private String configFileName;
     private String odfFileName;
     private String language;
+    private String filePattern;
 
     public void doOnLineConversion (String text) {
         try {
-            new OnLineTTS().generateAudio(language, URLEncoder.encode(text, "utf-8"));
+            new OnLineTTS().generateAudio(language, URLEncoder.encode(text, "utf-8"), filePattern);
         } catch (UnsupportedEncodingException e) {
             e.printStackTrace();
         } catch (IOException e) {
@@ -32,7 +33,7 @@ public class cliReader {
 
     public void doOfflineConversion (String text) {
         try {
-            new espeakTTS().generateAudio(language, text);
+            new espeakTTS().generateAudio(language, text, filePattern);
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -56,6 +57,8 @@ public class cliReader {
         ODTParser docParser = new ODTParser(odfFileName);
 
         this.language = setup.getLanguage();
+        this.filePattern = setup.getOutputAudioPattern();
+        System.out.println(this.filePattern);
 
         String text = docParser.getText();
         if (setup.getIsOnline()){

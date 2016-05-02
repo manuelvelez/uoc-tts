@@ -105,7 +105,7 @@ public class guiReader {
                         ex.printStackTrace();
                     }
                     try {
-                        new espeakTTS().generateAudio(language, text);
+                        new espeakTTS().generateAudio(language, text, "hola.mp3");
                     } catch (Exception ex) {
                         ex.printStackTrace();
                         System.out.println("[ERROR] Connection not available when online conversion selected");

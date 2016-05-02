@@ -15,35 +15,44 @@ public class OnLineTTS extends TTS {
             "Mozilla/5.0 (Windows NT 6.1; WOW64; rv:11.0) " +
                     "Gecko/20100101 Firefox/11.0";
 
-    public void generateAudio(String language, String text) throws IOException {
-        // Create url based on input params
-        String strUrl = TEXT_TO_SPEECH_SERVICE + "?" +
-                "tl=" + language + "&q=" + text + "&client=tw-ob";
-        URL url = new URL(strUrl);
+    public void generateAudio(String language, String text, String filePath) throws IOException {
 
-        HttpURLConnection connection = (HttpURLConnection) url.openConnection();
-
-        connection.setRequestMethod("GET");
-        connection.addRequestProperty("User-Agent", USER_AGENT);
-        connection.connect();
-
-        // Get content
-        BufferedInputStream bufIn =
-                new BufferedInputStream(connection.getInputStream());
-        byte[] buffer = new byte[1024];
-        int n;
-        ByteArrayOutputStream bufOut = new ByteArrayOutputStream();
-        while ((n = bufIn.read(buffer)) > 0) {
-            bufOut.write(buffer, 0, n);
-        }
-
+        String[] textSplitted = text.replaceAll("(.{0,"+ 100+"})\\b", "$1\n").split("\n");
         File output = new File("output.mp3");
-        BufferedOutputStream out =
-                new BufferedOutputStream(new FileOutputStream(output));
-        out.write(bufOut.toByteArray());
-        out.flush();
+        BufferedOutputStream out = null;
+        ByteArrayOutputStream bufOut = new ByteArrayOutputStream();
+
+        for (String subText: textSplitted) {
+            System.out.println(subText);
+
+            String strUrl = TEXT_TO_SPEECH_SERVICE + "?" +
+                    "tl=" + language + "&q=" + subText + "&client=tw-ob";
+            URL url = new URL(strUrl);
+
+            HttpURLConnection connection = (HttpURLConnection) url.openConnection();
+
+            connection.setRequestMethod("GET");
+            connection.addRequestProperty("User-Agent", USER_AGENT);
+            connection.connect();
+
+            BufferedInputStream bufIn =
+                    new BufferedInputStream(connection.getInputStream());
+            byte[] buffer = new byte[1024];
+            int n;
+            //ByteArrayOutputStream bufOut = new ByteArrayOutputStream();
+            ByteArrayOutputStream bufAux = new ByteArrayOutputStream();
+            while ((n = bufIn.read(buffer)) > 0) {
+                bufAux.write(buffer, 0, n);
+            }
+
+            bufOut.write(bufAux.toByteArray());
+
+            out = new BufferedOutputStream(new FileOutputStream(output));
+            out.write(bufOut.toByteArray());
+            out.flush();
+        }
         out.close();
 
-        new AudioManager().generateWavFile("output.mp3");
+        new AudioManager().generateOggFile("output.mp3");
     }
 }

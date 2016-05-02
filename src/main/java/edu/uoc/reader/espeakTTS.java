@@ -20,9 +20,9 @@ public class espeakTTS extends TTS{
     }
 
     @Override
-    public void generateAudio(String language, String text) throws IOException {
+    public void generateAudio(String language, String text, String filePath) throws IOException {
         try {
-            String [] cmd = {"espeak", "-v"+languages.get(language), text, "-woutput.wav"}; //Comando de apagado en windows
+            String [] cmd = {"espeak", "-v"+languages.get(language), "-s150", "-p0", text, "-woutput.wav"}; //Comando de apagado en windows
             Runtime.getRuntime().exec(cmd);
             new AudioManager().generateOggFile("output.wav");
         } catch (IOException ioe) {

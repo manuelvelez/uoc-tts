@@ -67,8 +67,6 @@ public class ODTParser extends ODFParser {
         }
         NodeList list = content.getRootElement().getElementsByTagName("office:text");
         text = this.recurse(list.item(0));
-        System.out.println("ESTO ES LO QUE VOY A LEER");
-        System.out.println(text);
         textSplitted = this.text.replaceAll("(.{0,"+ 100+"})\\b", "$1\n").split("\n");
     }
 

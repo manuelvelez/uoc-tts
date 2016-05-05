@@ -6,6 +6,7 @@ import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.File;
+import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
 
@@ -16,6 +17,29 @@ public class guiReader {
 
     private static String configFileName;
     private static String odfFileName;
+
+    private static String language;
+    private static String filePattern;
+    private static String filePath;
+
+    public static void doOnLineConversion (String text) {
+        try {
+            new OnLineTTS().generateAudio(language, URLEncoder.encode(text, "utf-8"), filePath, filePattern);
+        } catch (UnsupportedEncodingException e) {
+            e.printStackTrace();
+        } catch (IOException e) {
+            e.printStackTrace();
+            System.out.println("[ERROR] Connection not available when online conversion selected");
+        }
+    }
+
+    public static void doOfflineConversion (String text) {
+        try {
+            new espeakTTS().generateAudio(language, text, filePath, filePattern);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
 
     guiReader() {
         showWindow();
@@ -59,7 +83,6 @@ public class guiReader {
                     odfTextField.setText(selectedFile.getAbsolutePath());
                     odfFileName = selectedFile.getAbsolutePath();
                 }
-                System.out.println("You clicked the button");
             }
         });
         odfButton.setBounds(500, 10, 80, 25);
@@ -85,7 +108,6 @@ public class guiReader {
                     configTextField.setText(selectedFile.getAbsolutePath());
                     configFileName = selectedFile.getAbsolutePath();
                 }
-                System.out.println("You clicked the button");
             }
         });
         configButton.setBounds(500, 40, 80, 25);
@@ -94,23 +116,20 @@ public class guiReader {
         JButton startButton = new JButton("Start");
         startButton.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
-                    Config setup = new Config(configFileName);
-                    ODTParser docParser;
-                    docParser = new ODTParser(odfFileName);
-                    String language = "ES";
-                    String text = docParser.getText();
-                    try {
-                        text = URLEncoder.encode(text, "utf-8");
-                    } catch (UnsupportedEncodingException ex) {
-                        ex.printStackTrace();
-                    }
-                    try {
-                        new espeakTTS().generateAudio(language, text, "hola.mp3");
-                    } catch (Exception ex) {
-                        ex.printStackTrace();
-                        System.out.println("[ERROR] Connection not available when online conversion selected");
-                        System.exit(1);
-                    }
+                Config setup = new Config(configFileName);
+                ODTParser docParser = new ODTParser(odfFileName);
+
+                language = setup.getLanguage();
+                filePattern = setup.getOutputAudioPattern();
+                filePath = setup.getOutputAudioPath();
+
+                String text = docParser.getText();
+                if (setup.getIsOnline()){
+                    doOnLineConversion(text);
+                }
+                else {
+                    doOfflineConversion(text);
+                }
             }
         });
         startButton.setBounds(500, 70, 80, 25);

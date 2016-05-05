@@ -5,7 +5,6 @@ import it.sauronsoftware.jave.Encoder;
 import it.sauronsoftware.jave.EncoderException;
 import it.sauronsoftware.jave.EncodingAttributes;
 
-import javax.sound.sampled.*;
 import java.io.*;
 
 /**
@@ -15,7 +14,10 @@ public class AudioManager {
 
     public void generateOggFile(String audioPath){
         File source = new File(audioPath);
-        File target = new File("target.ogg");
+        String targetPath = audioPath.substring(0, audioPath.lastIndexOf(".")) + ".ogg";
+        File target = new File(targetPath);
+        target.delete();
+
         AudioAttributes audio = new AudioAttributes();
         audio.setCodec("vorbis");
         audio.setBitRate(new Integer(128000));
@@ -30,6 +32,8 @@ public class AudioManager {
         } catch (EncoderException e) {
             e.printStackTrace();
         }
+
+        source.delete();
     }
 
     AudioManager(){

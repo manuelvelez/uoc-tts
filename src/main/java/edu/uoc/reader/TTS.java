@@ -7,5 +7,5 @@ package edu.uoc.reader;
 import java.io.*;
 
 public abstract class TTS {
-    public abstract void generateAudio(String language, String text, String filePath) throws IOException;
+    public abstract void generateAudio(String language, String text, String filePath, String fileName) throws IOException;
 }

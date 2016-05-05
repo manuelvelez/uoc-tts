@@ -13,7 +13,7 @@ import java.io.IOException;
  */
 public class OffLineTTS extends TTS {
     @Override
-    public void generateAudio(String language, String text, String filePath) throws IOException {
+    public void generateAudio(String language, String text, String filePath, String fileName) throws IOException {
         /*System.setProperty("freetts.voices",
                 "com.sun.speech.freetts.en.us.cmu_us_kal.KevinVoiceDirectory");*/
 

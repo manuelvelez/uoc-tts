@@ -15,10 +15,13 @@ public class OnLineTTS extends TTS {
             "Mozilla/5.0 (Windows NT 6.1; WOW64; rv:11.0) " +
                     "Gecko/20100101 Firefox/11.0";
 
-    public void generateAudio(String language, String text, String filePath) throws IOException {
+    public void generateAudio(String language, String text, String filePath, String fileName) throws IOException {
 
         String[] textSplitted = text.replaceAll("(.{0,"+ 100+"})\\b", "$1\n").split("\n");
-        File output = new File("output.mp3");
+
+        File output = new File(filePath+"/"+ fileName+".mp3");
+        File pathDirectory = new File(filePath);
+        pathDirectory.mkdirs();
         BufferedOutputStream out = null;
         ByteArrayOutputStream bufOut = new ByteArrayOutputStream();
 
@@ -53,6 +56,6 @@ public class OnLineTTS extends TTS {
         }
         out.close();
 
-        new AudioManager().generateOggFile("output.mp3");
+        new AudioManager().generateOggFile(output.getPath());
     }
 }

@@ -161,7 +161,7 @@ public class Config {
             //Elements form reader node
             this.setSplitMode(readerElement.getChildText("split-by"));
             this.setAlternatives(readerElement.getChildText("alternatives"));
-            this.setOutputAudioPath(readerElement.getChildText("output-pattern"));
+            this.setOutputAudioPath(readerElement.getChildText("output-path"));
             this.setOutputAudioPattern(readerElement.getChildText("output-pattern"));
 
             System.out.println(this.toString());

@@ -2,13 +2,13 @@
 <config>
     <tts>
         <url>http://translate.google.com/translate_tts</url>
-        <online>false</online>
-        <language>ES</language>
+        <online>true</online>
+        <language>EN</language>
     </tts>
     <reader>
         <split-by>PAGE-BREAK</split-by>
         <alternatives>YES</alternatives>
         <output-path>./output</output-path>
-        <output-pattern>name-%N</output-pattern>
+        <output-pattern>testName</output-pattern>
     </reader>
 </config>

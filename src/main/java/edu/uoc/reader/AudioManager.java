@@ -1,10 +1,6 @@
 package edu.uoc.reader;
 
-import it.sauronsoftware.jave.AudioAttributes;
-import it.sauronsoftware.jave.Encoder;
-import it.sauronsoftware.jave.EncoderException;
-import it.sauronsoftware.jave.EncodingAttributes;
-
+import it.sauronsoftware.jave.*;
 import java.io.*;
 
 /**
@@ -12,11 +8,14 @@ import java.io.*;
  */
 public class AudioManager {
 
-    public void generateOggFile(String audioPath){
+    public void generateOggFile(String audioPath) throws EncoderException {
         File source = new File(audioPath);
         String targetPath = audioPath.substring(0, audioPath.lastIndexOf(".")) + ".ogg";
         File target = new File(targetPath);
         target.delete();
+
+        System.out.println(source.getAbsolutePath());
+        System.out.println(target.getAbsolutePath());
 
         AudioAttributes audio = new AudioAttributes();
         audio.setCodec("vorbis");
@@ -27,13 +26,11 @@ public class AudioManager {
         attrs.setFormat("ogg");
         attrs.setAudioAttributes(audio);
         Encoder encoder = new Encoder();
-        try {
-            encoder.encode(source, target, attrs);
-        } catch (EncoderException e) {
-            e.printStackTrace();
-        }
 
+        encoder.encode(source, target, attrs);
+        System.out.println("voy a eliminar: " + source.getAbsolutePath());
         source.delete();
+        System.out.println("DEBERIA HABERLO ELIMINADO YA");
     }
 
     AudioManager(){

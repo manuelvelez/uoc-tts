@@ -1,6 +1,7 @@
 package edu.uoc.reader;
 
 
+import it.sauronsoftware.jave.EncoderException;
 import org.odftoolkit.odfdom.doc.OdfDocument;
 import org.odftoolkit.odfdom.doc.OdfPresentationDocument;
 import org.odftoolkit.odfdom.doc.OdfSpreadsheetDocument;
@@ -30,11 +31,13 @@ public class guiReader {
     private static String filePattern;
     private static String filePath;
 
-    public static void doOnLineConversion (String text) throws IOException {
-        new OnLineTTS().generateAudio(language, URLEncoder.encode(text, "utf-8"), filePath, filePattern);
+    private static String onlineTTSServiceUrl;
+
+    public static void doOnLineConversion (String text) throws IOException, EncoderException {
+        new OnLineTTS(onlineTTSServiceUrl).generateAudio(language, text, filePath, filePattern);
     }
 
-    public static void doOfflineConversion (String text) throws IOException {
+    public static void doOfflineConversion (String text) throws IOException, EncoderException {
         new espeakTTS().generateAudio(language, text, filePath, filePattern);
     }
 
@@ -166,6 +169,7 @@ public class guiReader {
                 language = setup.getLanguage();
                 filePattern = setup.getOutputAudioPattern();
                 filePath = setup.getOutputAudioPath();
+                onlineTTSServiceUrl = setup.getTtsServiceUrl();
 
                 System.out.println(text);
 

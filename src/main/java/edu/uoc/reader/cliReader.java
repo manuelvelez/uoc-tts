@@ -1,5 +1,6 @@
 package edu.uoc.reader;
 
+import it.sauronsoftware.jave.EncoderException;
 import org.apache.commons.cli.BasicParser;
 import org.apache.commons.cli.CommandLine;
 import org.apache.commons.cli.CommandLineParser;
@@ -27,12 +28,13 @@ public class cliReader {
     private String language;
     private String filePattern;
     private String filePath;
+    private String onlineTTSServiceUrl;
 
-    public void doOnLineConversion (String text) throws IOException {
-        new OnLineTTS().generateAudio(language, URLEncoder.encode(text, "utf-8"), filePath, filePattern);
+    public void doOnLineConversion (String text) throws IOException, EncoderException {
+        new OnLineTTS(onlineTTSServiceUrl).generateAudio(language, text, filePath, filePattern);
     }
 
-    public void doOfflineConversion (String text) throws IOException {
+    public void doOfflineConversion (String text) throws IOException, EncoderException {
         new espeakTTS().generateAudio(language, text, filePath, filePattern);
     }
 
@@ -100,6 +102,7 @@ public class cliReader {
         this.language = setup.getLanguage();
         this.filePattern = setup.getOutputAudioPattern();
         this.filePath = setup.getOutputAudioPath();
+        this.onlineTTSServiceUrl = setup.getTtsServiceUrl();
 
         try {
             if (setup.getIsOnline()) {

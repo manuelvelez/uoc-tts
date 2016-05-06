@@ -1,21 +1,26 @@
 package edu.uoc.reader;
 
+import it.sauronsoftware.jave.EncoderException;
+
 import java.io.*;
 import java.net.HttpURLConnection;
 import java.net.URL;
+import java.net.URLEncoder;
 
 /**
  * Created by mvelezm on 13/04/16.
  */
 public class OnLineTTS extends TTS {
-    private static final String TEXT_TO_SPEECH_SERVICE =
-            "http://translate.google.com/translate_tts";
-
+    private String onlineTTSService;
     private static final String USER_AGENT =
             "Mozilla/5.0 (Windows NT 6.1; WOW64; rv:11.0) " +
                     "Gecko/20100101 Firefox/11.0";
 
-    public void generateAudio(String language, String text, String filePath, String fileName) throws IOException {
+    OnLineTTS(String url) {
+        this.onlineTTSService = url;
+    }
+
+    public void generateAudio(String language, String text, String filePath, String fileName) throws IOException, EncoderException {
 
         String[] textSplitted = text.replaceAll("(.{0,"+ 100+"})\\b", "$1\n").split("\n");
 
@@ -28,9 +33,8 @@ public class OnLineTTS extends TTS {
         for (String subText: textSplitted) {
             System.out.println(subText);
 
-            String strUrl = TEXT_TO_SPEECH_SERVICE + "?" +
-                    "tl=" + language + "&q=" + subText + "&client=tw-ob";
-            URL url = new URL(strUrl);
+            URL url = new URL(onlineTTSService + "?" +
+                    "tl=" + language + "&q=" + URLEncoder.encode(subText, "utf-8") + "&client=tw-ob");
 
             HttpURLConnection connection = (HttpURLConnection) url.openConnection();
 

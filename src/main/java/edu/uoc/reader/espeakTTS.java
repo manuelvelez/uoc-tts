@@ -1,5 +1,8 @@
 package edu.uoc.reader;
 
+import it.sauronsoftware.jave.EncoderException;
+
+import java.io.File;
 import java.io.IOException;
 import java.util.Collections;
 import java.util.HashMap;
@@ -20,14 +23,13 @@ public class espeakTTS extends TTS{
     }
 
     @Override
-    public void generateAudio(String language, String text, String filePath, String fileName) throws IOException {
-        try {
-            String audioFileName = filePath + "/" + fileName + ".wav";
-            String [] cmd = {"espeak", "-v"+languages.get(language), "-s150", "-p0", text, "-w" + audioFileName}; //Comando de apagado en windows
-            Runtime.getRuntime().exec(cmd);
-            new AudioManager().generateOggFile(audioFileName);
-        } catch (IOException ioe) {
-            System.out.println (ioe);
-        }
+    public void generateAudio(String language, String text, String filePath, String fileName) throws IOException, EncoderException {
+        String audioFileName = filePath + "/" + fileName + ".wav";
+        File pathDirectory = new File(filePath);
+        pathDirectory.mkdirs();
+        String [] cmd = {"espeak", "-v"+languages.get(language), "-s150", "-p0", text, "-w" + audioFileName};
+        Runtime.getRuntime().exec(cmd);
+
+        new AudioManager().generateOggFile(audioFileName);
     }
 }

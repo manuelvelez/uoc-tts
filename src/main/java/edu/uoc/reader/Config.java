@@ -34,19 +34,12 @@ public class Config {
 
     private final String xsdPath = "./config/reader.xsd";
 
-    private Boolean validate(){
-        try {
+    private void validate() throws IOException, SAXException {
             SchemaFactory factory =
                     SchemaFactory.newInstance(XMLConstants.W3C_XML_SCHEMA_NS_URI);
             Schema schema = factory.newSchema(new File(xsdPath));
             Validator validator = schema.newValidator();
             validator.validate(new StreamSource(new File(this.configFile)));
-        } catch (SAXException e) {
-            System.out.println("Exception: "+e.getMessage());
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-        return true;
     }
 
     @Override
@@ -132,49 +125,37 @@ public class Config {
         return xsdPath;
     }
 
-    public Config(String configFile) {
+    public Config(String configFile) throws IOException, SAXException, ParserConfigurationException, NullPointerException {
         this.configFile = configFile;
         System.out.println(this.configFile);
         Document configDocument = null;
-        try {
-            configDocument = useDOMParser(configFile);
-        } catch (ParserConfigurationException e) {
-            e.printStackTrace();
-        } catch (SAXException e) {
-            e.printStackTrace();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
 
-        if (this.validate() == true)
-        {
-            Element elConfig = configDocument.getRootElement();
-            Element ttsElement = elConfig.getChild("tts");
-            Element readerElement = elConfig.getChild("reader");
+        configDocument = useDOMParser(configFile);
 
-            //Elements from tts node
-            this.setTtsServiceUrl(ttsElement.getChildText("url"));
-            this.setIsOnline(Boolean.valueOf(ttsElement.getChildText("online")));
-            this.setLanguage(ttsElement.getChildText("language"));
+        this.validate();
+
+        Element elConfig = configDocument.getRootElement();
+        Element ttsElement = elConfig.getChild("tts");
+        Element readerElement = elConfig.getChild("reader");
+
+        //Elements from tts node
+        this.setTtsServiceUrl(ttsElement.getChildText("url"));
+        this.setIsOnline(Boolean.valueOf(ttsElement.getChildText("online")));
+        this.setLanguage(ttsElement.getChildText("language"));
 
 
-            //Elements form reader node
-            this.setSplitMode(readerElement.getChildText("split-by"));
-            this.setAlternatives(readerElement.getChildText("alternatives"));
-            this.setOutputAudioPath(readerElement.getChildText("output-path"));
-            this.setOutputAudioPattern(readerElement.getChildText("output-pattern"));
+        //Elements form reader node
+        this.setSplitMode(readerElement.getChildText("split-by"));
+        this.setAlternatives(readerElement.getChildText("alternatives"));
+        this.setOutputAudioPath(readerElement.getChildText("output-path"));
+        this.setOutputAudioPattern(readerElement.getChildText("output-pattern"));
 
-            System.out.println(this.toString());
-        }
-        else{
-            System.exit(1);
-        }
-
+        System.out.println(this.toString());
     }
 
     //Get JDOM document from DOM Parser
     private static org.jdom2.Document useDOMParser(String fileName)
-            throws ParserConfigurationException, SAXException, IOException {
+            throws ParserConfigurationException, SAXException, IOException, NullPointerException {
         //creating DOM Document
         DocumentBuilderFactory dbFactory = DocumentBuilderFactory.newInstance();
         DocumentBuilder dBuilder;

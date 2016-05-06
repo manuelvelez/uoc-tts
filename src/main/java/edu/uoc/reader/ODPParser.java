@@ -13,7 +13,7 @@ import org.w3c.dom.NodeList;
 /**
  * Created by mvelezm on 14/04/16.
  */
-public class ODTParser extends ODFParser {
+public class ODPParser extends ODFParser {
     private String documentName;
     private OdfDocument odfDocument;
     private String text;
@@ -44,15 +44,10 @@ public class ODTParser extends ODFParser {
                 '}';
     }
 
-    public ODTParser(OdfDocument document) throws Exception {
-        System.out.println("This is the shit: " + document.getClass());
-
-        OdfContentDom content = null;
-        content = document.getContentDom();
-
+    public ODPParser(OdfDocument document) throws Exception {
+        OdfContentDom content = document.getContentDom();
         System.out.println(document.loadSubDocuments());
         System.out.println(document.getMasterPages());
-
         NodeList list = content.getRootElement().getElementsByTagName("office:text");
         text = this.recurse(list.item(0));
         textSplitted = this.text.replaceAll("(.{0,"+ 100+"})\\b", "$1\n").split("\n");
@@ -85,7 +80,6 @@ public class ODTParser extends ODFParser {
             Node currentNode = nodeList.item(i);
             innerText = innerText + recurse(currentNode);
         }
-        //System.out.println(text);
         return innerText;
     }
 }

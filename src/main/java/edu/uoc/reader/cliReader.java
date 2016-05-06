@@ -5,7 +5,14 @@ import org.apache.commons.cli.CommandLine;
 import org.apache.commons.cli.CommandLineParser;
 import org.apache.commons.cli.ParseException;
 import org.apache.commons.cli.Options;
+import org.odftoolkit.odfdom.doc.OdfDocument;
+import org.odftoolkit.odfdom.doc.OdfPresentationDocument;
+import org.odftoolkit.odfdom.doc.OdfSpreadsheetDocument;
+import org.odftoolkit.odfdom.doc.OdfTextDocument;
+import org.xml.sax.SAXException;
 
+import javax.swing.*;
+import javax.xml.parsers.ParserConfigurationException;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
@@ -21,23 +28,12 @@ public class cliReader {
     private String filePattern;
     private String filePath;
 
-    public void doOnLineConversion (String text) {
-        try {
-            new OnLineTTS().generateAudio(language, URLEncoder.encode(text, "utf-8"), filePath, filePattern);
-        } catch (UnsupportedEncodingException e) {
-            e.printStackTrace();
-        } catch (IOException e) {
-            e.printStackTrace();
-            System.out.println("[ERROR] Connection not available when online conversion selected");
-        }
+    public void doOnLineConversion (String text) throws IOException {
+        new OnLineTTS().generateAudio(language, URLEncoder.encode(text, "utf-8"), filePath, filePattern);
     }
 
-    public void doOfflineConversion (String text) {
-        try {
-            new espeakTTS().generateAudio(language, text, filePath, filePattern);
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
+    public void doOfflineConversion (String text) throws IOException {
+        new espeakTTS().generateAudio(language, text, filePath, filePattern);
     }
 
     cliReader(String[] args, Options options){
@@ -54,19 +50,66 @@ public class cliReader {
             System.out.println("EXCEPCIÓN DE PARSEO");
         }
 
-        Config setup = new Config(configFileName);
-        ODTParser docParser = new ODTParser(odfFileName);
+        Config setup = null;
+        try {
+            setup = new Config(configFileName);
+        } catch (IOException e) {
+            e.printStackTrace();
+        } catch (SAXException e) {
+            e.printStackTrace();
+        } catch (ParserConfigurationException e) {
+            e.printStackTrace();
+        }
+
+        OdfDocument odfDocument = null;
+        try {
+            odfDocument = OdfDocument.loadDocument(odfFileName);
+        } catch (Exception e1) {
+            e1.printStackTrace();
+        }
+
+        String text = null;
+        if (odfDocument instanceof OdfTextDocument) {
+            ODTParser docParser = null;
+            try {
+                docParser = new ODTParser(odfDocument);
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+            text = docParser.getText();
+        }
+        else if (odfDocument instanceof OdfSpreadsheetDocument) {
+            ODSParser docParser = null;
+            try {
+                docParser = new ODSParser(odfDocument);
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+            text = docParser.getText();
+        }
+        else if (odfDocument instanceof OdfPresentationDocument) {
+            ODPParser docParser = null;
+            try {
+                docParser = new ODPParser(odfDocument);
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+            text = docParser.getText();
+        }
 
         this.language = setup.getLanguage();
         this.filePattern = setup.getOutputAudioPattern();
         this.filePath = setup.getOutputAudioPath();
 
-        String text = docParser.getText();
-        if (setup.getIsOnline()){
-            this.doOnLineConversion(text);
-        }
-        else {
-            this.doOfflineConversion(text);
+        try {
+            if (setup.getIsOnline()) {
+                doOnLineConversion(text);
+            } else {
+                doOfflineConversion(text);
+            }
+        } catch (Exception exception)
+        {
+            System.out.println(exception.getMessage());
         }
     }
 }

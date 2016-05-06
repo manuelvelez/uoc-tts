@@ -1,7 +1,15 @@
 package edu.uoc.reader;
 
 
+import org.odftoolkit.odfdom.doc.OdfDocument;
+import org.odftoolkit.odfdom.doc.OdfPresentationDocument;
+import org.odftoolkit.odfdom.doc.OdfSpreadsheetDocument;
+import org.odftoolkit.odfdom.doc.OdfTextDocument;
+import org.w3c.dom.Node;
+import org.xml.sax.SAXException;
+
 import javax.swing.*;
+import javax.xml.parsers.ParserConfigurationException;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -22,23 +30,12 @@ public class guiReader {
     private static String filePattern;
     private static String filePath;
 
-    public static void doOnLineConversion (String text) {
-        try {
-            new OnLineTTS().generateAudio(language, URLEncoder.encode(text, "utf-8"), filePath, filePattern);
-        } catch (UnsupportedEncodingException e) {
-            e.printStackTrace();
-        } catch (IOException e) {
-            e.printStackTrace();
-            System.out.println("[ERROR] Connection not available when online conversion selected");
-        }
+    public static void doOnLineConversion (String text) throws IOException {
+        new OnLineTTS().generateAudio(language, URLEncoder.encode(text, "utf-8"), filePath, filePattern);
     }
 
-    public static void doOfflineConversion (String text) {
-        try {
-            new espeakTTS().generateAudio(language, text, filePath, filePattern);
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
+    public static void doOfflineConversion (String text) throws IOException {
+        new espeakTTS().generateAudio(language, text, filePath, filePattern);
     }
 
     guiReader() {
@@ -49,7 +46,7 @@ public class guiReader {
     }
     public static void showWindow() {
         JFrame frame = new JFrame("Demo application");
-        frame.setSize(1000, 150);
+        frame.setSize(600, 150);
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 
         JPanel panel = new JPanel();
@@ -79,7 +76,6 @@ public class guiReader {
                 int result = fileChooser.showOpenDialog(odfButton);
                 if (result == JFileChooser.APPROVE_OPTION) {
                     File selectedFile = fileChooser.getSelectedFile();
-                    System.out.println("Selected file: " + selectedFile.getAbsolutePath());
                     odfTextField.setText(selectedFile.getAbsolutePath());
                     odfFileName = selectedFile.getAbsolutePath();
                 }
@@ -88,7 +84,7 @@ public class guiReader {
         odfButton.setBounds(500, 10, 80, 25);
         panel.add(odfButton);
 
-        JLabel configLabel = new JLabel("Config File");
+        JLabel configLabel = new JLabel("Config File:");
         configLabel.setBounds(10, 40, 80, 25);
         panel.add(configLabel);
 
@@ -104,7 +100,6 @@ public class guiReader {
                 int result = fileChooser.showOpenDialog(configButton);
                 if (result == JFileChooser.APPROVE_OPTION) {
                     File selectedFile = fileChooser.getSelectedFile();
-                    System.out.println("Selected file: " + selectedFile.getAbsolutePath());
                     configTextField.setText(selectedFile.getAbsolutePath());
                     configFileName = selectedFile.getAbsolutePath();
                 }
@@ -116,20 +111,76 @@ public class guiReader {
         JButton startButton = new JButton("Start");
         startButton.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
-                Config setup = new Config(configFileName);
-                ODTParser docParser = new ODTParser(odfFileName);
+                Config setup = null;
+                try {
+                    setup = new Config(configFileName);
+                } catch (IOException e1) {
+                    JOptionPane.showMessageDialog(null, e1.getMessage(), "IO Exception", JOptionPane.ERROR_MESSAGE);
+                } catch (SAXException e1) {
+                    JOptionPane.showMessageDialog(null, e1.getMessage(), "SAX Exception", JOptionPane.ERROR_MESSAGE);
+                } catch (ParserConfigurationException e1) {
+                    JOptionPane.showMessageDialog(null, e1.getMessage(), "Parse Exception", JOptionPane.ERROR_MESSAGE);
+                } catch (NullPointerException e1) {
+                    JOptionPane.showMessageDialog(null, "Config file is not set, please set and retry", "Configuration file name", JOptionPane.ERROR_MESSAGE);
+                }
+
+
+                OdfDocument odfDocument = null;
+                try {
+                    odfDocument = OdfDocument.loadDocument(odfFileName);
+                } catch (Exception e1) {
+                    JOptionPane.showMessageDialog(null, e1.getMessage(), "Lang Exception", JOptionPane.ERROR_MESSAGE);
+                }
+
+                String text = null;
+                System.out.println("THIS IS THE REAL SHIT: " + odfDocument.getClass());
+
+                if (odfDocument instanceof OdfTextDocument) {
+                    ODTParser docParser = null;
+                    try {
+                        docParser = new ODTParser(odfDocument);
+                    } catch (Exception e1) {
+                        JOptionPane.showMessageDialog(null, e1.getMessage(), "Exception", JOptionPane.ERROR_MESSAGE);
+                    }
+                    text = docParser.getText();
+                }
+                else if (odfDocument instanceof OdfSpreadsheetDocument) {
+                    ODSParser docParser = null;
+                    try {
+                        docParser = new ODSParser(odfDocument);
+                    } catch (Exception e1) {
+                        e1.printStackTrace();
+                    }
+                    text = docParser.getText();
+                }
+                else if (odfDocument instanceof OdfPresentationDocument) {
+                    ODPParser docParser = null;
+                    try {
+                        docParser = new ODPParser(odfDocument);
+                    } catch (Exception e1) {
+                        e1.printStackTrace();
+                    }
+                    text = docParser.getText();
+                }
 
                 language = setup.getLanguage();
                 filePattern = setup.getOutputAudioPattern();
                 filePath = setup.getOutputAudioPath();
 
-                String text = docParser.getText();
-                if (setup.getIsOnline()){
-                    doOnLineConversion(text);
+                System.out.println(text);
+
+
+                try {
+                    if (setup.getIsOnline()) {
+                        doOnLineConversion(text);
+                    } else {
+                        doOfflineConversion(text);
+                    }
+                } catch (Exception exception)
+                {
+                    JOptionPane.showMessageDialog(null, exception.getMessage(), "Conversion Exception", JOptionPane.ERROR_MESSAGE);
                 }
-                else {
-                    doOfflineConversion(text);
-                }
+
             }
         });
         startButton.setBounds(500, 70, 80, 25);

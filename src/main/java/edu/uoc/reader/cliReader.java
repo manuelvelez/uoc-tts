@@ -29,6 +29,7 @@ public class cliReader {
     private String filePattern;
     private String filePath;
     private String onlineTTSServiceUrl;
+    private String splitMode;
 
     public void doOnLineConversion (String text) throws IOException, EncoderException {
         new OnLineTTS(onlineTTSServiceUrl).generateAudio(language, text, filePath, filePattern);
@@ -36,6 +37,18 @@ public class cliReader {
 
     public void doOfflineConversion (String text) throws IOException, EncoderException {
         new espeakTTS().generateAudio(language, text, filePath, filePattern);
+    }
+
+    public String[] processText(String text) {
+        String[] pages = new String [] {"Empty"};
+        if (splitMode.equals("PAGE-BREAK")){
+            pages = text.split("PAGE-BREAK-MARK");
+        }
+        else {
+            String result = text.replaceAll("PAGE-BREAK-MARK","");
+            pages[0] = result;
+        }
+        return pages;
     }
 
     cliReader(String[] args, Options options){
@@ -103,9 +116,16 @@ public class cliReader {
         this.filePattern = setup.getOutputAudioPattern();
         this.filePath = setup.getOutputAudioPath();
         this.onlineTTSServiceUrl = setup.getTtsServiceUrl();
+        this.splitMode = setup.getSplitMode();
 
-        String[] pages = text.split("PAGE-BREAK-MARK");
+        String[] pages = processText(text);
         System.out.println("PAGE NUMBER: " + pages.length);
+        int i = 0;
+        for (String page: pages) {
+            System.out.println("PAGE NUMBER: " + i);
+            System.out.println(page);
+            i++;
+        }
 
         try {
             if (setup.getIsOnline()) {

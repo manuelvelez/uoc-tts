@@ -6,7 +6,7 @@
         <language>ES</language>
     </tts>
     <reader>
-        <split-by>PAGE-BREAK</split-by>
+        <split-by>OTHER</split-by>
         <alternatives>YES</alternatives>
         <output-path>./output</output-path>
         <output-pattern>testName</output-pattern>

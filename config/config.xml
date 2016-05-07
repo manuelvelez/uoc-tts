@@ -2,8 +2,8 @@
 <config>
     <tts>
         <url>http://translate.google.com/translate_tts</url>
-        <online>true</online>
-        <language>EN</language>
+        <online>false</online>
+        <language>ES</language>
     </tts>
     <reader>
         <split-by>PAGE-BREAK</split-by>

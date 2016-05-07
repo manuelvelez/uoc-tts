@@ -14,9 +14,6 @@ public class AudioManager {
         File target = new File(targetPath);
         target.delete();
 
-        System.out.println(source.getAbsolutePath());
-        System.out.println(target.getAbsolutePath());
-
         AudioAttributes audio = new AudioAttributes();
         audio.setCodec("vorbis");
         audio.setBitRate(new Integer(128000));
@@ -28,9 +25,7 @@ public class AudioManager {
         Encoder encoder = new Encoder();
 
         encoder.encode(source, target, attrs);
-        System.out.println("voy a eliminar: " + source.getAbsolutePath());
         source.delete();
-        System.out.println("DEBERIA HABERLO ELIMINADO YA");
     }
 
     AudioManager(){

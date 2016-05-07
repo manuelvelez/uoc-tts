@@ -104,6 +104,9 @@ public class cliReader {
         this.filePath = setup.getOutputAudioPath();
         this.onlineTTSServiceUrl = setup.getTtsServiceUrl();
 
+        String[] pages = text.split("PAGE-BREAK-MARK");
+        System.out.println("PAGE NUMBER: " + pages.length);
+
         try {
             if (setup.getIsOnline()) {
                 doOnLineConversion(text);

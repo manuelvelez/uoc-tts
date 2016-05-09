@@ -23,12 +23,13 @@ public class espeakTTS extends TTS{
     }
 
     @Override
-    public void generateAudio(String language, String text, String filePath, String fileName) throws IOException, EncoderException {
+    public void generateAudio(String language, String text, String filePath, String fileName) throws IOException, EncoderException, InterruptedException {
         String audioFileName = filePath + "/" + fileName + ".wav";
         File pathDirectory = new File(filePath);
         pathDirectory.mkdirs();
         String [] cmd = {"espeak", "-v"+languages.get(language), "-s150", "-p0", text, "-w" + audioFileName};
-        Runtime.getRuntime().exec(cmd);
+        Process espeak = Runtime.getRuntime().exec(cmd);
+        espeak.waitFor();
 
         new AudioManager().generateOggFile(audioFileName);
     }

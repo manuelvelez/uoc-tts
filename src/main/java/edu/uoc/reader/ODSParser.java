@@ -47,20 +47,12 @@ public class ODSParser extends ODFParser {
     }
 
     public ODSParser(OdfDocument document) throws Exception {
-        System.out.println("This is the shit: " + document.getClass());
-
-        OdfContentDom content = null;
+        OdfContentDom content;
+        text="";
 
         content = document.getContentDom();
-        NodeList list = content.getRootElement().getElementsByTagName("office:text");
-        System.out.println(list.item(0).getChildNodes().getLength());
-        /*
-        for (int i = 0; i<list.item(0).getChildNodes().getLength(); i++){
-            Node node = list.item(0).getChildNodes().item(i);
-            System.out.println(node.getClass());
-        }*/
+        NodeList list = content.getRootElement().getElementsByTagName("office:spreadsheet");
         String lastStyle = "";
-
         for (int j = 0; j<list.item(0).getChildNodes().getLength(); j++){
             Node singleNode = list.item(0).getChildNodes().item(j);
             if ( singleNode instanceof OdfTextParagraph){
@@ -71,15 +63,13 @@ public class ODSParser extends ODFParser {
                 else if(!lastStyle.equals(((OdfTextParagraph) singleNode).getStyleName()))
                     text = text + "PAGE-BREAK-MARK";
             }
-
             text = text + this.recurse(list.item(0).getChildNodes().item(j));
+
         }
 
-        System.out.println("#########################################################################################");
-        System.out.println(text);
-        System.out.println("#########################################################################################");
-
         textSplitted = this.text.replaceAll("(.{0,"+ 100+"})\\b", "$1\n").split("\n");
+
+        System.out.println(text);
     }
 
     public String recurse(Node node) {
@@ -89,7 +79,6 @@ public class ODSParser extends ODFParser {
         System.out.println(node.getClass());
         if (node instanceof TextImpl) {
             innerText = innerText + node.getTextContent() + ENDLN;
-
         }
 
         else if(node instanceof TextSoftPageBreakElement) {

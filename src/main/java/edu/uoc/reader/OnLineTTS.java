@@ -21,6 +21,7 @@ public class OnLineTTS extends TTS {
     }
 
     public void generateAudio(String language, String text, String filePath, String fileName) throws IOException, EncoderException {
+        System.out.println(filePath+"/"+fileName);
 
         String[] textSplitted = text.replaceAll("(.{0,"+ 100+"})\\b", "$1\n").split("\n");
 
@@ -31,32 +32,32 @@ public class OnLineTTS extends TTS {
         ByteArrayOutputStream bufOut = new ByteArrayOutputStream();
 
         for (String subText: textSplitted) {
-            System.out.println(subText);
+            URL url = null;
+            if (!subText.equals("")) {
+                url = new URL(onlineTTSService + "?" +
+                        "tl=" + language + "&q=" + URLEncoder.encode(subText, "utf-8") + "&client=tw-ob");
+                HttpURLConnection connection = (HttpURLConnection) url.openConnection();
 
-            URL url = new URL(onlineTTSService + "?" +
-                    "tl=" + language + "&q=" + URLEncoder.encode(subText, "utf-8") + "&client=tw-ob");
+                connection.setRequestMethod("GET");
+                connection.addRequestProperty("User-Agent", USER_AGENT);
+                connection.connect();
 
-            HttpURLConnection connection = (HttpURLConnection) url.openConnection();
+                BufferedInputStream bufIn =
+                        new BufferedInputStream(connection.getInputStream());
+                byte[] buffer = new byte[1024];
+                int n;
+                //ByteArrayOutputStream bufOut = new ByteArrayOutputStream();
+                ByteArrayOutputStream bufAux = new ByteArrayOutputStream();
+                while ((n = bufIn.read(buffer)) > 0) {
+                    bufAux.write(buffer, 0, n);
+                }
 
-            connection.setRequestMethod("GET");
-            connection.addRequestProperty("User-Agent", USER_AGENT);
-            connection.connect();
+                bufOut.write(bufAux.toByteArray());
 
-            BufferedInputStream bufIn =
-                    new BufferedInputStream(connection.getInputStream());
-            byte[] buffer = new byte[1024];
-            int n;
-            //ByteArrayOutputStream bufOut = new ByteArrayOutputStream();
-            ByteArrayOutputStream bufAux = new ByteArrayOutputStream();
-            while ((n = bufIn.read(buffer)) > 0) {
-                bufAux.write(buffer, 0, n);
+                out = new BufferedOutputStream(new FileOutputStream(output));
+                out.write(bufOut.toByteArray());
+                out.flush();
             }
-
-            bufOut.write(bufAux.toByteArray());
-
-            out = new BufferedOutputStream(new FileOutputStream(output));
-            out.write(bufOut.toByteArray());
-            out.flush();
         }
         out.close();
 

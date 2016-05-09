@@ -68,11 +68,6 @@ public class ODPParser extends ODFParser {
 
             text = text + this.recurse(list.item(0).getChildNodes().item(j));
         }
-
-        System.out.println("#########################################################################################");
-        System.out.println(text);
-        System.out.println("#########################################################################################");
-
         textSplitted = this.text.replaceAll("(.{0,"+ 100+"})\\b", "$1\n").split("\n");
     }
 

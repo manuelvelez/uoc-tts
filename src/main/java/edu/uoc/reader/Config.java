@@ -4,6 +4,8 @@ package edu.uoc.reader;
  */
 
 import com.sun.org.apache.xpath.internal.operations.Bool;
+import org.apache.log4j.Level;
+import org.apache.log4j.Logger;
 import org.jdom2.Document;
 import org.jdom2.Element;
 import org.jdom2.input.DOMBuilder;
@@ -21,6 +23,7 @@ import java.io.File;
 import java.io.IOException;
 
 public class Config {
+    private static final Logger log= Logger.getLogger( cliReader.class.getName());
     private String configFile;
 
     private String ttsServiceUrl;
@@ -127,7 +130,6 @@ public class Config {
 
     public Config(String configFile) throws IOException, SAXException, ParserConfigurationException, NullPointerException {
         this.configFile = configFile;
-        System.out.println(this.configFile);
         Document configDocument = null;
 
         configDocument = useDOMParser(configFile);
@@ -150,7 +152,7 @@ public class Config {
         this.setOutputAudioPath(readerElement.getChildText("output-path"));
         this.setOutputAudioPattern(readerElement.getChildText("output-pattern"));
 
-        System.out.println(this.toString());
+        log.log(Level.INFO,this.toString());
     }
 
     //Get JDOM document from DOM Parser

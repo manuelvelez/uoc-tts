@@ -37,7 +37,7 @@ public class guiReader {
         new OnLineTTS(onlineTTSServiceUrl).generateAudio(language, text, filePath, filePattern);
     }
 
-    public static void doOfflineConversion (String text) throws IOException, EncoderException {
+    public static void doOfflineConversion (String text) throws IOException, EncoderException, InterruptedException {
         new espeakTTS().generateAudio(language, text, filePath, filePattern);
     }
 

@@ -3,12 +3,7 @@ package edu.uoc.reader;
 import org.apache.xerces.dom.TextImpl;
 import org.odftoolkit.odfdom.doc.OdfDocument;
 import org.odftoolkit.odfdom.dom.OdfContentDom;
-import org.odftoolkit.odfdom.dom.element.draw.DrawObjectElement;
-import org.odftoolkit.odfdom.dom.element.office.OfficeTextElement;
-import org.odftoolkit.odfdom.dom.element.text.TextSequenceDeclElement;
 import org.odftoolkit.odfdom.dom.element.text.TextSoftPageBreakElement;
-import org.odftoolkit.odfdom.incubator.doc.draw.OdfDrawFrame;
-import org.odftoolkit.odfdom.incubator.doc.draw.OdfDrawImage;
 import org.odftoolkit.odfdom.incubator.doc.text.OdfTextParagraph;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
@@ -48,25 +43,16 @@ public class ODTParser extends ODFParser {
     }
 
     public ODTParser(OdfDocument document) throws Exception {
-        System.out.println("This is the shit: " + document.getClass());
-
-        OdfContentDom content = null;
-
+        OdfContentDom content;
+        text="";
         content = document.getContentDom();
         NodeList list = content.getRootElement().getElementsByTagName("office:text");
-        System.out.println(list.item(0).getChildNodes().getLength());
-        /*
-        for (int i = 0; i<list.item(0).getChildNodes().getLength(); i++){
-            Node node = list.item(0).getChildNodes().item(i);
-            System.out.println(node.getClass());
-        }*/
         String lastStyle = "";
 
         for (int j = 0; j<list.item(0).getChildNodes().getLength(); j++){
             Node singleNode = list.item(0).getChildNodes().item(j);
             if ( singleNode instanceof OdfTextParagraph){
                 if (lastStyle.equals("")){
-                    //First TextParagraph
                     lastStyle = ((OdfTextParagraph) singleNode).getStyleName();
                 }
                 else if(!lastStyle.equals(((OdfTextParagraph) singleNode).getStyleName()))
@@ -75,11 +61,6 @@ public class ODTParser extends ODFParser {
 
             text = text + this.recurse(list.item(0).getChildNodes().item(j));
         }
-
-        System.out.println("#########################################################################################");
-        System.out.println(text);
-        System.out.println("#########################################################################################");
-
         textSplitted = this.text.replaceAll("(.{0,"+ 100+"})\\b", "$1\n").split("\n");
     }
 
@@ -87,10 +68,8 @@ public class ODTParser extends ODFParser {
         String innerText = "";
         final String ENDLN = "\n";
 
-        System.out.println(node.getClass());
         if (node instanceof TextImpl) {
             innerText = innerText + node.getTextContent() + ENDLN;
-
         }
 
         else if(node instanceof TextSoftPageBreakElement) {

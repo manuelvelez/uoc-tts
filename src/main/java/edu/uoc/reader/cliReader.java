@@ -6,6 +6,7 @@ import org.apache.commons.cli.CommandLine;
 import org.apache.commons.cli.CommandLineParser;
 import org.apache.commons.cli.ParseException;
 import org.apache.commons.cli.Options;
+import org.apache.log4j.Level;
 import org.odftoolkit.odfdom.doc.OdfDocument;
 import org.odftoolkit.odfdom.doc.OdfPresentationDocument;
 import org.odftoolkit.odfdom.doc.OdfSpreadsheetDocument;
@@ -17,12 +18,14 @@ import javax.xml.parsers.ParserConfigurationException;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
+import org.apache.log4j.Logger;
 
 /**
  * Created by mvelezm on 26/04/16.
  */
 
 public class cliReader {
+    private static final Logger log= Logger.getLogger( cliReader.class.getName());
     private String configFileName;
     private String odfFileName;
     private String language;
@@ -35,8 +38,25 @@ public class cliReader {
         new OnLineTTS(onlineTTSServiceUrl).generateAudio(language, text, filePath, filePattern);
     }
 
-    public void doOfflineConversion (String text) throws IOException, EncoderException {
+    public void doOnLineConversion (String[] text) throws IOException, EncoderException {
+        Integer i = 0;
+        for (String subText: text) {
+            i++;
+            new OnLineTTS(onlineTTSServiceUrl).generateAudio(language, subText, filePath, filePattern+String.format("%03d", i));
+            doOnLineConversion(text);
+        }
+    }
+
+    public void doOfflineConversion (String text) throws IOException, EncoderException, InterruptedException {
         new espeakTTS().generateAudio(language, text, filePath, filePattern);
+    }
+
+    public void doOfflineConversion (String[] text) throws IOException, EncoderException, InterruptedException {
+        Integer i = 0;
+        for (String subText: text) {
+            i++;
+            new espeakTTS().generateAudio(language, subText, filePath, filePattern+String.format("%03d", i));
+        }
     }
 
     public String[] processText(String text) {
@@ -62,7 +82,7 @@ public class cliReader {
             if (cmd.hasOption("doc"))
                 this.odfFileName = cmd.getOptionValue("doc");
         } catch (ParseException e) {
-            System.out.println("EXCEPCIÓN DE PARSEO");
+            System.out.println(e.getMessage());
         }
 
         Config setup = null;
@@ -117,25 +137,43 @@ public class cliReader {
         this.filePath = setup.getOutputAudioPath();
         this.onlineTTSServiceUrl = setup.getTtsServiceUrl();
         this.splitMode = setup.getSplitMode();
-
+        log.log(Level.INFO, text);
         String[] pages = processText(text);
-        System.out.println("PAGE NUMBER: " + pages.length);
-        int i = 0;
-        for (String page: pages) {
-            System.out.println("PAGE NUMBER: " + i);
-            System.out.println(page);
-            i++;
-        }
+        log.log(Level.INFO,"Document language:\t" + this.language);
+        log.log(Level.INFO, "Output folder:\t\t" + this.filePath);
+        log.log(Level.INFO, "Output file name:\t" + this.filePath);
+        log.log(Level.INFO, "Split file mode:\t" + this.splitMode);
+        log.log(Level.INFO, "Output file number:\t" + pages.length);
+        log.log(Level.INFO, "Start of the conversion process");
 
-        try {
+        for (String g: pages)
+            log.log(Level.INFO, g);
+
+
             if (setup.getIsOnline()) {
-                doOnLineConversion(text);
+                try {
+                    if (pages.length == 1 )
+                        doOnLineConversion(pages[0]);
+                    else
+                        doOnLineConversion(pages);
+                } catch (IOException e) {
+                    e.printStackTrace();
+                } catch (EncoderException e) {
+                    e.printStackTrace();
+                }
             } else {
-                doOfflineConversion(text);
+                try {
+                    if (pages.length == 1 )
+                        doOfflineConversion(pages[0]);
+                    else
+                        doOfflineConversion(pages);
+                } catch (IOException e) {
+                    e.printStackTrace();
+                } catch (EncoderException e) {
+                    e.printStackTrace();
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
             }
-        } catch (Exception exception)
-        {
-            System.out.println(exception.getMessage());
-        }
     }
 }

@@ -1,6 +1,7 @@
 package edu.uoc.reader;
 
 import it.sauronsoftware.jave.EncoderException;
+import org.apache.log4j.Logger;
 
 import java.io.*;
 import java.net.HttpURLConnection;
@@ -11,6 +12,7 @@ import java.net.URLEncoder;
  * Created by mvelezm on 13/04/16.
  */
 public class OnLineTTS extends TTS {
+    private static final Logger log= Logger.getLogger( OnLineTTS.class.getName());
     private String onlineTTSService;
     private static final String USER_AGENT =
             "Mozilla/5.0 (Windows NT 6.1; WOW64; rv:11.0) " +
@@ -21,8 +23,6 @@ public class OnLineTTS extends TTS {
     }
 
     public void generateAudio(String language, String text, String filePath, String fileName) throws IOException, EncoderException {
-        System.out.println(filePath+"/"+fileName);
-
         String[] textSplitted = text.replaceAll("(.{0,"+ 100+"})\\b", "$1\n").split("\n");
 
         File output = new File(filePath+"/"+ fileName+".mp3");

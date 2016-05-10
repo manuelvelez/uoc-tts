@@ -1,8 +1,11 @@
 package edu.uoc.reader;
 
 import org.apache.commons.cli.*;
+import org.apache.log4j.Level;
+import org.apache.log4j.Logger;
 
 public class Reader {
+    private static final Logger log= Logger.getLogger( Reader.class.getName());
 
     public static void main(String[] args) throws InterruptedException {
 
@@ -12,9 +15,11 @@ public class Reader {
         options.addOption("doc", "document path", true, "set the path for the document to be parsed");
 
         if (args.length == 0) {
-            new guiReader();
+            log.log(Level.INFO, "Running in Graphical mode");
+            new GuiReader();
         } else {
-            new cliReader(args, options);
+            log.log(Level.INFO, "Running in Command line mode");
+            new CliReader(args, options);
         }
     }
 }

@@ -1,5 +1,7 @@
 package edu.uoc.reader;
 
+import org.apache.log4j.Level;
+import org.apache.log4j.Logger;
 import org.apache.xerces.dom.TextImpl;
 import org.odftoolkit.odfdom.doc.OdfDocument;
 import org.odftoolkit.odfdom.dom.OdfContentDom;
@@ -16,9 +18,10 @@ import org.w3c.dom.NodeList;
  * Created by mvelezm on 14/04/16.
  */
 public class ODPParser extends ODFParser {
+    private static final Logger log= Logger.getLogger( ODSParser.class.getName());
     private String documentName;
     private OdfDocument odfDocument;
-    private String text;
+    private String text = "";
     private String[] textSplitted;
 
     public String[] getTextSplitted() {
@@ -52,22 +55,13 @@ public class ODPParser extends ODFParser {
         OdfContentDom content = null;
 
         content = document.getContentDom();
-        NodeList list = content.getRootElement().getElementsByTagName("office:text");
+        NodeList list = content.getRootElement().getElementsByTagName("draw:page");
         String lastStyle = "";
 
-        for (int j = 0; j<list.item(0).getChildNodes().getLength(); j++){
-            Node singleNode = list.item(0).getChildNodes().item(j);
-            if ( singleNode instanceof OdfTextParagraph){
-                if (lastStyle.equals("")){
-                    //First TextParagraph
-                    lastStyle = ((OdfTextParagraph) singleNode).getStyleName();
-                }
-                else if(!lastStyle.equals(((OdfTextParagraph) singleNode).getStyleName()))
-                    text = text + PAGE_BREAK_MARK;
-            }
-
-            text = text + this.recurse(list.item(0).getChildNodes().item(j));
+        for (int k = 0; k < list.getLength(); k ++){
+            text = text + this.recurse(list.item(k)) + PAGE_BREAK_MARK;
         }
+        log.log(Level.INFO, text);
         textSplitted = this.text.replaceAll("(.{0,"+ 100+"})\\b", "$1\n").split("\n");
     }
 

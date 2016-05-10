@@ -1,5 +1,6 @@
 package edu.uoc.reader;
 
+import org.apache.log4j.Logger;
 import org.apache.xerces.dom.TextImpl;
 import org.odftoolkit.odfdom.doc.OdfDocument;
 import org.odftoolkit.odfdom.dom.OdfContentDom;
@@ -16,6 +17,7 @@ import org.w3c.dom.NodeList;
  * Created by mvelezm on 14/04/16.
  */
 public class ODSParser extends ODFParser {
+    private static final Logger log= Logger.getLogger( ODSParser.class.getName());
     private String documentName;
     private OdfDocument odfDocument;
     private String text;

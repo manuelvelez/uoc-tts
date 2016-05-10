@@ -2,6 +2,8 @@ package edu.uoc.reader;
 
 
 import it.sauronsoftware.jave.EncoderException;
+import org.apache.log4j.Level;
+import org.apache.log4j.Logger;
 import org.odftoolkit.odfdom.doc.OdfDocument;
 import org.odftoolkit.odfdom.doc.OdfPresentationDocument;
 import org.odftoolkit.odfdom.doc.OdfSpreadsheetDocument;
@@ -22,7 +24,9 @@ import java.net.URLEncoder;
 /**
  * Created by mvelezm on 26/04/16.
  */
-public class guiReader {
+public class GuiReader {
+
+    private static final Logger log= Logger.getLogger( GuiReader.class.getName());
 
     private static String configFileName;
     private static String odfFileName;
@@ -32,16 +36,47 @@ public class guiReader {
     private static String filePath;
 
     private static String onlineTTSServiceUrl;
+    private static String splitMode;
+
 
     public static void doOnLineConversion (String text) throws IOException, EncoderException {
         new OnLineTTS(onlineTTSServiceUrl).generateAudio(language, text, filePath, filePattern);
     }
 
-    public static void doOfflineConversion (String text) throws IOException, EncoderException, InterruptedException {
-        new espeakTTS().generateAudio(language, text, filePath, filePattern);
+    public static void doOnLineConversion (String[] text) throws IOException, EncoderException {
+        Integer i = 0;
+        for (String subText: text) {
+            i++;
+            new OnLineTTS(onlineTTSServiceUrl).generateAudio(language, subText, filePath, filePattern+String.format("%03d", i));
+            doOnLineConversion(text);
+        }
     }
 
-    guiReader() {
+    public static void doOfflineConversion (String text) throws IOException, EncoderException, InterruptedException {
+        new EspeakTTS().generateAudio(language, text, filePath, filePattern);
+    }
+
+    public static void doOfflineConversion (String[] text) throws IOException, EncoderException, InterruptedException {
+        Integer i = 0;
+        for (String subText: text) {
+            i++;
+            new EspeakTTS().generateAudio(language, subText, filePath, filePattern+String.format("%03d", i));
+        }
+    }
+
+    public static String[] processText(String text) {
+        String[] pages = new String [] {"Empty"};
+        if (splitMode.equals("PAGE-BREAK")){
+            pages = text.split("PAGE-BREAK-MARK");
+        }
+        else {
+            String result = text.replaceAll("PAGE-BREAK-MARK","");
+            pages[0] = result;
+        }
+        return pages;
+    }
+
+    GuiReader() {
         showWindow();
     }
     public void doTheConversion() {
@@ -136,7 +171,6 @@ public class guiReader {
                 }
 
                 String text = null;
-                System.out.println("THIS IS THE REAL SHIT: " + odfDocument.getClass());
 
                 if (odfDocument instanceof OdfTextDocument) {
                     ODTParser docParser = null;
@@ -170,20 +204,48 @@ public class guiReader {
                 filePattern = setup.getOutputAudioPattern();
                 filePath = setup.getOutputAudioPath();
                 onlineTTSServiceUrl = setup.getTtsServiceUrl();
+                splitMode = setup.getSplitMode();
+                String[] pages = processText(text);
 
-                System.out.println(text);
+                log.log(Level.INFO, "Document language: " + language);
+                log.log(Level.INFO, "Output folder: " + filePath);
+                log.log(Level.INFO, "Output file name: " + filePattern);
+                log.log(Level.INFO, "Split file mode: " + splitMode);
+                log.log(Level.INFO, "Output file number: " + pages.length);
+                log.log(Level.INFO, "Is online?: " + setup.getIsOnline());
+                log.log(Level.INFO, "Start of the conversion process");
 
-
-                try {
-                    if (setup.getIsOnline()) {
-                        doOnLineConversion(text);
-                    } else {
-                        doOfflineConversion(text);
+                if (setup.getIsOnline()) {
+                    try {
+                        if (pages.length == 1 )
+                            doOnLineConversion(pages[0]);
+                        else
+                            doOnLineConversion(pages);
+                    } catch (IOException e1) {
+                        log.log(Level.ERROR, e1.getMessage());
+                        JOptionPane.showMessageDialog(null, e1.getMessage(), "Conversion Exception", JOptionPane.ERROR_MESSAGE);
+                    } catch (EncoderException e1) {
+                        log.log(Level.ERROR, e1.getMessage());
+                        JOptionPane.showMessageDialog(null, e1.getMessage(), "Encoder Exception", JOptionPane.ERROR_MESSAGE);
                     }
-                } catch (Exception exception)
-                {
-                    JOptionPane.showMessageDialog(null, exception.getMessage(), "Conversion Exception", JOptionPane.ERROR_MESSAGE);
+                } else {
+                    try {
+                        if (pages.length == 1 )
+                            doOfflineConversion(pages[0]);
+                        else
+                            doOfflineConversion(pages);
+                    } catch (IOException e1) {
+                        log.log(Level.ERROR, e1.getMessage());
+                        JOptionPane.showMessageDialog(null, e1.getMessage(), "Conversion Exception", JOptionPane.ERROR_MESSAGE);
+                    } catch (EncoderException e1) {
+                        log.log(Level.ERROR, e1.getMessage());
+                        JOptionPane.showMessageDialog(null, e1.getMessage(), "Encoder Exception", JOptionPane.ERROR_MESSAGE);
+                    } catch (InterruptedException e1) {
+                        log.log(Level.ERROR, e1.getMessage());
+                        JOptionPane.showMessageDialog(null, e1.getMessage(), "Interrupted Exception", JOptionPane.ERROR_MESSAGE);
+                    }
                 }
+                log.log(Level.INFO, "Process finished");
 
             }
         });

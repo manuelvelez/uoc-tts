@@ -23,7 +23,7 @@ import java.io.File;
 import java.io.IOException;
 
 public class Config {
-    private static final Logger log= Logger.getLogger( cliReader.class.getName());
+    private static final Logger log= Logger.getLogger( Config.class.getName());
     private String configFile;
 
     private String ttsServiceUrl;

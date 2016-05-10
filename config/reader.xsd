@@ -7,14 +7,30 @@
             <xs:sequence>
               <xs:element type="xs:anyURI" name="url"/>
               <xs:element type="xs:boolean" name="online"/>
-              <xs:element type="xs:string" name="language"/>
+              <xs:element name="language">
+                <xs:simpleType>
+                  <xs:restriction base="xs:string">
+                    <xs:enumeration value="ES"/>
+                    <xs:enumeration value="EN"/>
+                    <xs:enumeration value="CA"/>
+                  </xs:restriction>
+                </xs:simpleType>
+              </xs:element>
             </xs:sequence>
           </xs:complexType>
         </xs:element>
         <xs:element name="reader">
           <xs:complexType>
             <xs:sequence>
-              <xs:element type="xs:string" name="split-by"/>
+              <xs:element name="split-by">
+                <xs:simpleType>
+                  <xs:restriction base="xs:string">
+                    <xs:enumeration value="PAGE-BREAK"/>
+                    <xs:enumeration value="SECTIONS"/>
+                    <xs:enumeration value="UNIQUE"/>
+                  </xs:restriction>
+                </xs:simpleType>
+              </xs:element>
               <xs:element type="xs:string" name="alternatives"/>
               <xs:element type="xs:string" name="output-path"/>
               <xs:element type="xs:string" name="output-pattern"/>

@@ -13,19 +13,16 @@ import org.odftoolkit.odfdom.doc.OdfSpreadsheetDocument;
 import org.odftoolkit.odfdom.doc.OdfTextDocument;
 import org.xml.sax.SAXException;
 
-import javax.swing.*;
 import javax.xml.parsers.ParserConfigurationException;
 import java.io.IOException;
-import java.io.UnsupportedEncodingException;
-import java.net.URLEncoder;
 import org.apache.log4j.Logger;
 
 /**
  * Created by mvelezm on 26/04/16.
  */
 
-public class cliReader {
-    private static final Logger log= Logger.getLogger( cliReader.class.getName());
+public class CliReader {
+    private static final Logger log= Logger.getLogger( CliReader.class.getName());
     private String configFileName;
     private String odfFileName;
     private String language;
@@ -43,19 +40,18 @@ public class cliReader {
         for (String subText: text) {
             i++;
             new OnLineTTS(onlineTTSServiceUrl).generateAudio(language, subText, filePath, filePattern+String.format("%03d", i));
-            doOnLineConversion(text);
         }
     }
 
     public void doOfflineConversion (String text) throws IOException, EncoderException, InterruptedException {
-        new espeakTTS().generateAudio(language, text, filePath, filePattern);
+        new EspeakTTS().generateAudio(language, text, filePath, filePattern);
     }
 
     public void doOfflineConversion (String[] text) throws IOException, EncoderException, InterruptedException {
         Integer i = 0;
         for (String subText: text) {
             i++;
-            new espeakTTS().generateAudio(language, subText, filePath, filePattern+String.format("%03d", i));
+            new EspeakTTS().generateAudio(language, subText, filePath, filePattern+String.format("%03d", i));
         }
     }
 
@@ -71,7 +67,7 @@ public class cliReader {
         return pages;
     }
 
-    cliReader(String[] args, Options options){
+    CliReader(String[] args, Options options){
         CommandLineParser parser = new BasicParser();
         CommandLine cmd = null;
 
@@ -137,43 +133,41 @@ public class cliReader {
         this.filePath = setup.getOutputAudioPath();
         this.onlineTTSServiceUrl = setup.getTtsServiceUrl();
         this.splitMode = setup.getSplitMode();
-        log.log(Level.INFO, text);
         String[] pages = processText(text);
-        log.log(Level.INFO,"Document language:\t" + this.language);
-        log.log(Level.INFO, "Output folder:\t\t" + this.filePath);
-        log.log(Level.INFO, "Output file name:\t" + this.filePath);
-        log.log(Level.INFO, "Split file mode:\t" + this.splitMode);
-        log.log(Level.INFO, "Output file number:\t" + pages.length);
+
+        log.log(Level.INFO, "Document language: " + this.language);
+        log.log(Level.INFO, "Output folder: " + this.filePath);
+        log.log(Level.INFO, "Output file name: " + this.filePath);
+        log.log(Level.INFO, "Split file mode: " + this.splitMode);
+        log.log(Level.INFO, "Output file number: " + pages.length);
+        log.log(Level.INFO, "Is online?: " + setup.getIsOnline());
         log.log(Level.INFO, "Start of the conversion process");
 
-        for (String g: pages)
-            log.log(Level.INFO, g);
-
-
-            if (setup.getIsOnline()) {
-                try {
-                    if (pages.length == 1 )
-                        doOnLineConversion(pages[0]);
-                    else
-                        doOnLineConversion(pages);
-                } catch (IOException e) {
-                    e.printStackTrace();
-                } catch (EncoderException e) {
-                    e.printStackTrace();
-                }
-            } else {
-                try {
-                    if (pages.length == 1 )
-                        doOfflineConversion(pages[0]);
-                    else
-                        doOfflineConversion(pages);
-                } catch (IOException e) {
-                    e.printStackTrace();
-                } catch (EncoderException e) {
-                    e.printStackTrace();
-                } catch (InterruptedException e) {
-                    e.printStackTrace();
-                }
+        if (setup.getIsOnline()) {
+            try {
+                if (pages.length == 1 )
+                    doOnLineConversion(pages[0]);
+                else
+                    doOnLineConversion(pages);
+            } catch (IOException e) {
+                log.log(Level.ERROR, e.getMessage());
+            } catch (EncoderException e) {
+                log.log(Level.ERROR, e.getMessage());
             }
+        } else {
+            try {
+                if (pages.length == 1 )
+                    doOfflineConversion(pages[0]);
+                else
+                    doOfflineConversion(pages);
+            } catch (IOException e) {
+                log.log(Level.ERROR, e.getMessage());
+            } catch (EncoderException e) {
+                log.log(Level.ERROR, e.getMessage());
+            } catch (InterruptedException e) {
+                log.log(Level.ERROR, e.getMessage());
+            }
+        }
+        log.log(Level.INFO, "Process finished");
     }
 }

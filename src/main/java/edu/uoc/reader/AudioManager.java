@@ -11,7 +11,7 @@ import java.nio.file.Files;
  * Created by mvelezm on 1/05/16.
  */
 public class AudioManager {
-    private static final Logger log= Logger.getLogger( cliReader.class.getName());
+    private static final Logger log= Logger.getLogger( AudioManager.class.getName());
 
     public void generateOggFile(String audioPath) throws EncoderException {
 
@@ -36,7 +36,7 @@ public class AudioManager {
         attrs.setAudioAttributes(audio);
         Encoder encoder = new Encoder();
         encoder.encode(source, target, attrs);
-        //source.delete();
+        source.delete();
     }
 
     AudioManager(){

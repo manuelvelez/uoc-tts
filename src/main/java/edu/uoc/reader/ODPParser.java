@@ -61,7 +61,6 @@ public class ODPParser extends ODFParser {
         for (int k = 0; k < list.getLength(); k ++){
             text = text + this.recurse(list.item(k)) + PAGE_BREAK_MARK;
         }
-        log.log(Level.INFO, text);
         textSplitted = this.text.replaceAll("(.{0,"+ 100+"})\\b", "$1\n").split("\n");
     }
 

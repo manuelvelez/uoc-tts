@@ -67,37 +67,52 @@ public class CliReader {
         return pages;
     }
 
-    CliReader(String[] args, Options options){
+    CliReader(String[] args, Options options) {
         CommandLineParser parser = new BasicParser();
         CommandLine cmd = null;
 
         try {
             cmd = parser.parse(options, args);
-            if (cmd.hasOption("config"))
+            if (cmd.hasOption("config") && cmd.hasOption("doc")) {
                 this.configFileName = cmd.getOptionValue("config");
-            if (cmd.hasOption("doc"))
                 this.odfFileName = cmd.getOptionValue("doc");
+            }
+            else {
+                log.log(Level.ERROR,"Invalid command line parameters");
+                log.log(Level.INFO,"Command line execution needs 2 parameters: --config pathToXmlConfigFile --doc pathToOdfFile");
+                log.log(Level.INFO,"Gui execution accepts no parameter.");
+                System.exit(255);
+            }
         } catch (ParseException e) {
-            System.out.println(e.getMessage());
+            log.log(Level.ERROR, e.getMessage());
+            System.exit(1);
         }
 
         Config setup = null;
         try {
             setup = new Config(configFileName);
         } catch (IOException e) {
-            e.printStackTrace();
+            log.log(Level.ERROR, e.getMessage());
+            System.exit(1);
         } catch (SAXException e) {
-            e.printStackTrace();
+            log.log(Level.ERROR, e.getMessage());
+            System.exit(1);
         } catch (ParserConfigurationException e) {
-            e.printStackTrace();
+            log.log(Level.ERROR, e.getMessage());
+            System.exit(1);
         }
 
         OdfDocument odfDocument = null;
         try {
             odfDocument = OdfDocument.loadDocument(odfFileName);
+        } catch (NullPointerException e1) {
+            log.log(Level.ERROR, "Null filename");
+            System.exit(1);
         } catch (Exception e1) {
-            e1.printStackTrace();
+            log.log(Level.ERROR, e1.getMessage());
+            System.exit(1);
         }
+
 
         String text = null;
         if (odfDocument instanceof OdfTextDocument) {
@@ -127,6 +142,11 @@ public class CliReader {
             }
             text = docParser.getText();
         }
+        else {
+            log.log(Level.ERROR, "Unsupported file type: " + odfDocument.getClass());
+            System.exit(1);
+        }
+
 
         this.language = setup.getLanguage();
         this.filePattern = setup.getOutputAudioPattern();
@@ -151,8 +171,10 @@ public class CliReader {
                     doOnLineConversion(pages);
             } catch (IOException e) {
                 log.log(Level.ERROR, e.getMessage());
+                System.exit(2);
             } catch (EncoderException e) {
                 log.log(Level.ERROR, e.getMessage());
+                System.exit(2);
             }
         } else {
             try {
@@ -162,10 +184,13 @@ public class CliReader {
                     doOfflineConversion(pages);
             } catch (IOException e) {
                 log.log(Level.ERROR, e.getMessage());
+                System.exit(2);
             } catch (EncoderException e) {
                 log.log(Level.ERROR, e.getMessage());
+                System.exit(2);
             } catch (InterruptedException e) {
                 log.log(Level.ERROR, e.getMessage());
+                System.exit(2);
             }
         }
         log.log(Level.INFO, "Process finished");

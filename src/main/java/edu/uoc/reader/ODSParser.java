@@ -70,15 +70,12 @@ public class ODSParser extends ODFParser {
         }
 
         textSplitted = this.text.replaceAll("(.{0,"+ 100+"})\\b", "$1\n").split("\n");
-
-        System.out.println(text);
     }
 
     public String recurse(Node node) {
         String innerText = "";
         final String ENDLN = "\n";
 
-        System.out.println(node.getClass());
         if (node instanceof TextImpl) {
             innerText = innerText + node.getTextContent() + ENDLN;
         }

@@ -2,11 +2,11 @@
   <xs:element name="config">
     <xs:complexType>
       <xs:sequence>
-        <xs:element name="tts">
+        <xs:element name="tts" >
           <xs:complexType>
             <xs:sequence>
-              <xs:element type="xs:anyURI" name="url"/>
               <xs:element type="xs:boolean" name="online"/>
+              <xs:element type="xs:anyURI" name="url"/>
               <xs:element name="language">
                 <xs:simpleType>
                   <xs:restriction base="xs:string">
@@ -26,14 +26,13 @@
                 <xs:simpleType>
                   <xs:restriction base="xs:string">
                     <xs:enumeration value="PAGE-BREAK"/>
-                    <xs:enumeration value="SECTIONS"/>
                     <xs:enumeration value="UNIQUE"/>
                   </xs:restriction>
                 </xs:simpleType>
               </xs:element>
-              <xs:element type="xs:string" name="alternatives"/>
-              <xs:element type="xs:string" name="output-path"/>
-              <xs:element type="xs:string" name="output-pattern"/>
+              <xs:element type="xs:boolean" name="alternatives" default="true"/>
+              <xs:element type="xs:string" name="output-path" />
+              <xs:element type="xs:string" name="output-pattern" />
             </xs:sequence>
           </xs:complexType>
         </xs:element>

@@ -21,6 +21,8 @@ import javax.xml.validation.SchemaFactory;
 import javax.xml.validation.Validator;
 import java.io.File;
 import java.io.IOException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 
 public class Config {
     private static final Logger log= Logger.getLogger( Config.class.getName());
@@ -31,7 +33,7 @@ public class Config {
     private String language;
 
     private String splitMode;
-    private String alternatives;
+    private Boolean alternatives;
     private String outputAudioPath;
     private String outputAudioPattern;
 
@@ -100,11 +102,11 @@ public class Config {
         this.splitMode = splitMode;
     }
 
-    public String getAlternatives() {
+    public Boolean getAlternatives() {
         return alternatives;
     }
 
-    public void setAlternatives(String alternatives) {
+    public void setAlternatives(Boolean alternatives) {
         this.alternatives = alternatives;
     }
 
@@ -121,7 +123,8 @@ public class Config {
     }
 
     public void setOutputAudioPattern(String outputAudioPattern) {
-        this.outputAudioPattern = outputAudioPattern;
+        String date = new SimpleDateFormat("yyyyMMdd-HHmmss").format(new Date());
+        this.outputAudioPattern = outputAudioPattern + '_' + date;
     }
 
     public String getXsdPath() {
@@ -148,7 +151,7 @@ public class Config {
 
         //Elements form reader node
         this.setSplitMode(readerElement.getChildText("split-by"));
-        this.setAlternatives(readerElement.getChildText("alternatives"));
+        this.setAlternatives(Boolean.valueOf(ttsElement.getChildText("alternatives")));
         this.setOutputAudioPath(readerElement.getChildText("output-path"));
         this.setOutputAudioPattern(readerElement.getChildText("output-pattern"));
 

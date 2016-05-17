@@ -4,6 +4,10 @@ import org.apache.log4j.Logger;
 import org.apache.xerces.dom.TextImpl;
 import org.odftoolkit.odfdom.doc.OdfDocument;
 import org.odftoolkit.odfdom.dom.OdfContentDom;
+import org.odftoolkit.odfdom.dom.element.table.TableTableCellElement;
+import org.odftoolkit.odfdom.dom.element.table.TableTableElement;
+import org.odftoolkit.odfdom.dom.element.table.TableTableHeaderRowsElement;
+import org.odftoolkit.odfdom.dom.element.table.TableTableRowElement;
 import org.odftoolkit.odfdom.dom.element.text.TextSoftPageBreakElement;
 import org.odftoolkit.odfdom.incubator.doc.text.OdfTextParagraph;
 import org.w3c.dom.Node;
@@ -64,9 +68,12 @@ public class ODTParser extends ODFParser {
             text = text + this.recurse(list.item(0).getChildNodes().item(j));
         }
         textSplitted = this.text.replaceAll("(.{0,"+ 100+"})\\b", "$1\n").split("\n");
+
+        System.out.println(text);
     }
 
     public String recurse(Node node) {
+        System.out.println(node.getClass());
         String innerText = "";
         final String ENDLN = "\n";
 
@@ -78,6 +85,15 @@ public class ODTParser extends ODFParser {
             innerText = innerText + "PAGE-BREAK-MARK";
         }
 
+        else if (node instanceof TableTableElement) {
+            innerText = innerText + "TABLE ";
+        }
+        else if (node instanceof TableTableHeaderRowsElement)
+            innerText = innerText + "HEADER: ";
+        else if (node instanceof TableTableRowElement)
+            innerText = innerText + "ROW ";
+        else if (node instanceof TableTableCellElement)
+            innerText = innerText + "CELL ";
         if (node.hasChildNodes()) {
             for (int j = 0; j<node.getChildNodes().getLength(); j++){
                 innerText = innerText + this.recurse(node.getChildNodes().item(j));

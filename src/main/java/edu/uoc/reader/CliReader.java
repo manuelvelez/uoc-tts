@@ -39,7 +39,7 @@ public class CliReader {
         Integer i = 0;
         for (String subText: text) {
             i++;
-            new OnLineTTS(onlineTTSServiceUrl).generateAudio(language, subText, filePath, filePattern+String.format("%03d", i));
+            new OnLineTTS(onlineTTSServiceUrl).generateAudio(language, subText, filePath, filePattern + '_' + String.format("%03d", i));
         }
     }
 
@@ -51,7 +51,7 @@ public class CliReader {
         Integer i = 0;
         for (String subText: text) {
             i++;
-            new EspeakTTS().generateAudio(language, subText, filePath, filePattern+String.format("%03d", i));
+            new EspeakTTS().generateAudio(language, subText, filePath, filePattern + '_' + String.format("%03d", i));
         }
     }
 

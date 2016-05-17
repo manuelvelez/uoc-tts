@@ -38,6 +38,8 @@ public class GuiReader {
     private static String onlineTTSServiceUrl;
     private static String splitMode;
 
+    private static File current_dir;
+
 
     public static void doOnLineConversion (String text) throws IOException, EncoderException {
         new OnLineTTS(onlineTTSServiceUrl).generateAudio(language, text, filePath, filePattern);
@@ -47,7 +49,7 @@ public class GuiReader {
         Integer i = 0;
         for (String subText: text) {
             i++;
-            new OnLineTTS(onlineTTSServiceUrl).generateAudio(language, subText, filePath, filePattern+String.format("%03d", i));
+            new OnLineTTS(onlineTTSServiceUrl).generateAudio(language, subText, filePath, filePattern + '_' + String.format("%03d", i));
             doOnLineConversion(text);
         }
     }
@@ -60,7 +62,7 @@ public class GuiReader {
         Integer i = 0;
         for (String subText: text) {
             i++;
-            new EspeakTTS().generateAudio(language, subText, filePath, filePattern+String.format("%03d", i));
+            new EspeakTTS().generateAudio(language, subText, filePath, filePattern + '_' + String.format("%03d", i));
         }
     }
 
@@ -98,6 +100,8 @@ public class GuiReader {
 
         panel.setLayout(null);
 
+        current_dir = new File(System.getProperty("user.home"));
+
         JLabel odfFileLabel = new JLabel("Odf File:");
         odfFileLabel.setBounds(10, 10, 80, 25);
         panel.add(odfFileLabel);
@@ -110,10 +114,11 @@ public class GuiReader {
         odfButton.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 JFileChooser fileChooser = new JFileChooser();
-                fileChooser.setCurrentDirectory(new File(System.getProperty("user.home")));
+                fileChooser.setCurrentDirectory(current_dir);
                 int result = fileChooser.showOpenDialog(odfButton);
                 if (result == JFileChooser.APPROVE_OPTION) {
                     File selectedFile = fileChooser.getSelectedFile();
+                    current_dir=new File(selectedFile.getParent());
                     odfTextField.setText(selectedFile.getAbsolutePath());
                     odfFileName = selectedFile.getAbsolutePath();
                 }
@@ -134,7 +139,7 @@ public class GuiReader {
         configButton.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 JFileChooser fileChooser = new JFileChooser();
-                fileChooser.setCurrentDirectory(new File(System.getProperty("user.home")));
+                fileChooser.setCurrentDirectory(current_dir);
                 int result = fileChooser.showOpenDialog(configButton);
                 if (result == JFileChooser.APPROVE_OPTION) {
                     File selectedFile = fileChooser.getSelectedFile();

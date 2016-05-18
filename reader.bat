@@ -1,4 +1,5 @@
 set READER_CMD_LINE_ARGS=%*
+set JAVA_OPTS="-Dlog4j.configuration=file:config\log4j.properties"
 
 @echo %READER_CMD_LINE_ARGS%
 
@@ -15,7 +16,5 @@ IF %RESULT% == 0 (
 echo on
 @echo %MESSAGE%
 
-
-	
-java.exe -jar ./reader.jar %READER_CMD_LINE_ARGS%
-
+java.exe %JAVA_OPTS% -jar ./reader.jar %READER_CMD_LINE_ARGS%
+ 

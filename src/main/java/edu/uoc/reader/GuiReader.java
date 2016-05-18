@@ -99,8 +99,10 @@ public class GuiReader {
     private static void placeComponents(JPanel panel) {
 
         panel.setLayout(null);
-
-        current_dir = new File(System.getProperty("user.home"));
+        if (System.getProperty("os.name").contains("Windows"))
+            current_dir = new File(System.getenv("USERPROFILE"));
+        else
+            current_dir = new File(System.getProperty("user.home"));
 
         JLabel odfFileLabel = new JLabel("Odf File:");
         odfFileLabel.setBounds(10, 10, 80, 25);
@@ -144,7 +146,6 @@ public class GuiReader {
                 if (result == JFileChooser.APPROVE_OPTION) {
                     File selectedFile = fileChooser.getSelectedFile();
                     configTextField.setText(selectedFile.getAbsolutePath());
-                    configFileName = selectedFile.getAbsolutePath();
                 }
             }
         });
@@ -156,7 +157,9 @@ public class GuiReader {
             public void actionPerformed(ActionEvent e) {
                 Config setup = null;
                 try {
-                    setup = new Config(configFileName);
+                    setup = new Config(configTextField.getText());
+                    configFileName = configTextField.getText();
+                    //setup = new Config(configFileName);
                 } catch (IOException e1) {
                     JOptionPane.showMessageDialog(null, e1.getMessage(), "IO Exception", JOptionPane.ERROR_MESSAGE);
                 } catch (SAXException e1) {
@@ -170,7 +173,9 @@ public class GuiReader {
 
                 OdfDocument odfDocument = null;
                 try {
-                    odfDocument = OdfDocument.loadDocument(odfFileName);
+                    odfDocument = OdfDocument.loadDocument(odfTextField.getText());
+                    odfFileName = odfTextField.getText();
+                    //odfDocument = OdfDocument.loadDocument(odfFileName);
                 } catch (Exception e1) {
                     JOptionPane.showMessageDialog(null, e1.getMessage(), "Lang Exception", JOptionPane.ERROR_MESSAGE);
                 }

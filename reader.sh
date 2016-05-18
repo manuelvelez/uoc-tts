@@ -1,6 +1,7 @@
 #!/bin/bash
 
 DIR=$(dirname $0)
+JAVA_OPTS="-Dlog4j.configuration=file:./config/log4j.properties"
 
 is_espeak_path=$(which espeak)
 if [ $? -eq 0 ]
@@ -12,4 +13,4 @@ fi
 
 echo [$(date +%F-%H:%M:%S)][Reader][$espeak_result]
 
-java -jar $DIR/reader.jar $@
+java $JAVA_OPTS -jar $DIR/reader.jar $@

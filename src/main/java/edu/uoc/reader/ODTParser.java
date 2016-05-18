@@ -13,6 +13,8 @@ import org.odftoolkit.odfdom.incubator.doc.text.OdfTextParagraph;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 
+import java.util.logging.Level;
+
 /**
  * Created by mvelezm on 14/04/16.
  */
@@ -68,12 +70,9 @@ public class ODTParser extends ODFParser {
             text = text + this.recurse(list.item(0).getChildNodes().item(j));
         }
         textSplitted = this.text.replaceAll("(.{0,"+ 100+"})\\b", "$1\n").split("\n");
-
-        System.out.println(text);
     }
 
     public String recurse(Node node) {
-        System.out.println(node.getClass());
         String innerText = "";
         final String ENDLN = "\n";
 
@@ -86,14 +85,14 @@ public class ODTParser extends ODFParser {
         }
 
         else if (node instanceof TableTableElement) {
-            innerText = innerText + "TABLE ";
+            innerText = innerText + "TABLA, ";
         }
         else if (node instanceof TableTableHeaderRowsElement)
-            innerText = innerText + "HEADER: ";
+            innerText = innerText + "CABECERA, ";
         else if (node instanceof TableTableRowElement)
-            innerText = innerText + "ROW ";
+            innerText = innerText + "FILA,  ";
         else if (node instanceof TableTableCellElement)
-            innerText = innerText + "CELL ";
+            innerText = innerText + "CELDA, ";
         if (node.hasChildNodes()) {
             for (int j = 0; j<node.getChildNodes().getLength(); j++){
                 innerText = innerText + this.recurse(node.getChildNodes().item(j));

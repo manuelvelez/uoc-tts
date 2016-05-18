@@ -10,7 +10,7 @@ public class Reader {
     public static void main(String[] args) throws InterruptedException {
 
         Options options = new Options();
-
+        log.log(Level.INFO, "Running in: " + System.getProperty("os.name"));
         options.addOption("config", "config path", true, "set the path for the config file");
         options.addOption("doc", "document path", true, "set the path for the document to be parsed");
 

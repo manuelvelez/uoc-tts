@@ -117,7 +117,6 @@ public class ODTParser extends ODFParser {
         for (int j = 0; j<styles.getLength(); j++){
             Node singleNode = styles.item(j);
             if (singleNode.getAttributes().getNamedItem("fo:break-before") != null ){
-                System.out.println(singleNode.getParentNode().getAttributes().getNamedItem("style:name").getNodeValue());
                 styleList.add(singleNode.getParentNode().getAttributes().getNamedItem("style:name").getNodeValue());
             }
         }

@@ -1,5 +1,5 @@
 set READER_CMD_LINE_ARGS=%*
-set JAVA_OPTS="-Dlog4j.configuration=file:config\log4j.properties"
+set JAVA_OPTS="-Dlog4j.configuration=file:config\log4j.properties -Xms512m -Xmx2048m"
 
 @echo %READER_CMD_LINE_ARGS%
 

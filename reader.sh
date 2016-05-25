@@ -1,7 +1,7 @@
 #!/bin/bash
 
 DIR=$(dirname $0)
-JAVA_OPTS="-Dlog4j.configuration=file:./config/log4j.properties"
+JAVA_OPTS="-Dlog4j.configuration=file:./config/log4j.properties  -Xms512m -Xmx2048m"
 
 is_espeak_path=$(which espeak)
 if [ $? -eq 0 ]

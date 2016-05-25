@@ -113,6 +113,13 @@ public class CliReader {
             System.exit(1);
         }
 
+        this.language = setup.getLanguage();
+        this.filePattern = setup.getOutputAudioPattern();
+        this.filePath = setup.getOutputAudioPath();
+        this.onlineTTSServiceUrl = setup.getTtsServiceUrl();
+        this.splitMode = setup.getSplitMode();
+
+
 
         String text = null;
         if (odfDocument instanceof OdfTextDocument) {
@@ -147,12 +154,6 @@ public class CliReader {
             System.exit(1);
         }
 
-
-        this.language = setup.getLanguage();
-        this.filePattern = setup.getOutputAudioPattern();
-        this.filePath = setup.getOutputAudioPath();
-        this.onlineTTSServiceUrl = setup.getTtsServiceUrl();
-        this.splitMode = setup.getSplitMode();
         String[] pages = processText(text);
 
         log.log(Level.INFO, "Document language: " + this.language);

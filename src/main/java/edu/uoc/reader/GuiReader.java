@@ -182,6 +182,12 @@ public class GuiReader {
 
                 String text = null;
 
+                language = setup.getLanguage();
+                filePattern = setup.getOutputAudioPattern();
+                filePath = setup.getOutputAudioPath();
+                onlineTTSServiceUrl = setup.getTtsServiceUrl();
+                splitMode = setup.getSplitMode();
+
                 if (odfDocument instanceof OdfTextDocument) {
                     ODTParser docParser = null;
                     try {
@@ -210,11 +216,7 @@ public class GuiReader {
                     text = docParser.getText();
                 }
 
-                language = setup.getLanguage();
-                filePattern = setup.getOutputAudioPattern();
-                filePath = setup.getOutputAudioPath();
-                onlineTTSServiceUrl = setup.getTtsServiceUrl();
-                splitMode = setup.getSplitMode();
+
                 String[] pages = processText(text);
 
                 log.log(Level.INFO, "Document language: " + language);

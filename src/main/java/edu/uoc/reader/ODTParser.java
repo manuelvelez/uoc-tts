@@ -52,16 +52,16 @@ public class ODTParser extends ODFParser {
     private static final Map<String, String> cellMap;
     static {
         Map<String, String> aMap = new HashMap<String, String>();
-        aMap.put("ES", "celda, ");
-        aMap.put("EN", "cell, ");
-        aMap.put("CA", "cel·la, ");
+        aMap.put("ES", ", celda, ");
+        aMap.put("EN", ", cell, ");
+        aMap.put("CA", ", cel·la, ");
         cellMap = Collections.unmodifiableMap(aMap);
     }
 
     private static final Map<String, String> headerMap;
     static {
         Map<String, String> aMap = new HashMap<String, String>();
-        aMap.put("ES", "celda, ");
+        aMap.put("ES", "cabecera, ");
         aMap.put("EN", "header, ");
         aMap.put("CA", "capçalera, ");
         headerMap = Collections.unmodifiableMap(aMap);
@@ -103,7 +103,6 @@ public class ODTParser extends ODFParser {
         content = document.getContentDom();
 
         String documentLanguage = language;
-
         if(!rowMap.containsKey(language))
             documentLanguage="EN";
 
@@ -136,7 +135,6 @@ public class ODTParser extends ODFParser {
 
     public String recurse(Node node) {
         StringBuilder innerText = new StringBuilder("");
-        System.out.println(node.getClass());
         final String ENDLN = "\n";
 
         if (node instanceof TextIndexBodyElement) {

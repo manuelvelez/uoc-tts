@@ -48,7 +48,7 @@ public class ODSParser extends ODFParser {
                 '}';
     }
 
-    public ODSParser(OdfDocument document) throws Exception {
+    public ODSParser(OdfDocument document, String language) throws Exception {
         OdfContentDom content;
         text="";
 

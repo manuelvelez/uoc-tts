@@ -118,7 +118,7 @@ public class CliReader {
         if (odfDocument instanceof OdfTextDocument) {
             ODTParser docParser = null;
             try {
-                docParser = new ODTParser(odfDocument);
+                docParser = new ODTParser(odfDocument, language);
             } catch (Exception e) {
                 e.printStackTrace();
             }
@@ -127,7 +127,7 @@ public class CliReader {
         else if (odfDocument instanceof OdfSpreadsheetDocument) {
             ODSParser docParser = null;
             try {
-                docParser = new ODSParser(odfDocument);
+                docParser = new ODSParser(odfDocument, language);
             } catch (Exception e) {
                 e.printStackTrace();
             }
@@ -136,7 +136,7 @@ public class CliReader {
         else if (odfDocument instanceof OdfPresentationDocument) {
             ODPParser docParser = null;
             try {
-                docParser = new ODPParser(odfDocument);
+                docParser = new ODPParser(odfDocument, language);
             } catch (Exception e) {
                 e.printStackTrace();
             }

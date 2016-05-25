@@ -185,7 +185,7 @@ public class GuiReader {
                 if (odfDocument instanceof OdfTextDocument) {
                     ODTParser docParser = null;
                     try {
-                        docParser = new ODTParser(odfDocument);
+                        docParser = new ODTParser(odfDocument, language);
                     } catch (Exception e1) {
                         JOptionPane.showMessageDialog(null, e1.getMessage(), "Exception", JOptionPane.ERROR_MESSAGE);
                     }
@@ -194,7 +194,7 @@ public class GuiReader {
                 else if (odfDocument instanceof OdfSpreadsheetDocument) {
                     ODSParser docParser = null;
                     try {
-                        docParser = new ODSParser(odfDocument);
+                        docParser = new ODSParser(odfDocument, language);
                     } catch (Exception e1) {
                         e1.printStackTrace();
                     }
@@ -203,7 +203,7 @@ public class GuiReader {
                 else if (odfDocument instanceof OdfPresentationDocument) {
                     ODPParser docParser = null;
                     try {
-                        docParser = new ODPParser(odfDocument);
+                        docParser = new ODPParser(odfDocument, language);
                     } catch (Exception e1) {
                         e1.printStackTrace();
                     }

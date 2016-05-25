@@ -36,7 +36,7 @@ public class AudioManager {
         attrs.setAudioAttributes(audio);
         Encoder encoder = new Encoder();
         encoder.encode(source, target, attrs);
-        source.delete();
+        //source.delete();
     }
 
     AudioManager(){

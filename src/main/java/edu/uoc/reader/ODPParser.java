@@ -51,7 +51,7 @@ public class ODPParser extends ODFParser {
                 '}';
     }
 
-    public ODPParser(OdfDocument document) throws Exception {
+    public ODPParser(OdfDocument document, String language) throws Exception {
         OdfContentDom content = null;
 
         content = document.getContentDom();

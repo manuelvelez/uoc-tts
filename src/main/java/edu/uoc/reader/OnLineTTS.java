@@ -46,7 +46,7 @@ public class OnLineTTS extends TTS {
                         new BufferedInputStream(connection.getInputStream());
                 byte[] buffer = new byte[1024];
                 int n;
-                //ByteArrayOutputStream bufOut = new ByteArrayOutputStream();
+
                 ByteArrayOutputStream bufAux = new ByteArrayOutputStream();
                 while ((n = bufIn.read(buffer)) > 0) {
                     bufAux.write(buffer, 0, n);

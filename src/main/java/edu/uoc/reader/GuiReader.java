@@ -8,7 +8,6 @@ import org.odftoolkit.odfdom.doc.OdfDocument;
 import org.odftoolkit.odfdom.doc.OdfPresentationDocument;
 import org.odftoolkit.odfdom.doc.OdfSpreadsheetDocument;
 import org.odftoolkit.odfdom.doc.OdfTextDocument;
-import org.w3c.dom.Node;
 import org.xml.sax.SAXException;
 
 import javax.swing.*;
@@ -18,8 +17,6 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.File;
 import java.io.IOException;
-import java.io.UnsupportedEncodingException;
-import java.net.URLEncoder;
 
 /**
  * Created by mvelezm on 26/04/16.
@@ -38,31 +35,38 @@ public class GuiReader {
     private static String onlineTTSServiceUrl;
     private static String splitMode;
 
-    private static File current_dir;
+    private static File currentDir;
+    private static File configDir;
+
+    private static Config guiConfig;
 
 
     public static void doOnLineConversion (String text) throws IOException, EncoderException {
-        new OnLineTTS(onlineTTSServiceUrl).generateAudio(language, text, filePath, filePattern);
+        System.out.println(guiConfig.toString());
+        new OnLineTTS(onlineTTSServiceUrl).generateAudio(guiConfig.getLanguage(), text, guiConfig.getOutputAudioPath(), guiConfig.getOutputAudioPattern());
     }
 
     public static void doOnLineConversion (String[] text) throws IOException, EncoderException {
+        System.out.println(guiConfig.toString());
         Integer i = 0;
         for (String subText: text) {
             i++;
-            new OnLineTTS(onlineTTSServiceUrl).generateAudio(language, subText, filePath, filePattern + '_' + String.format("%03d", i));
-            doOnLineConversion(text);
+            new OnLineTTS(onlineTTSServiceUrl).generateAudio(guiConfig.getLanguage(), subText, guiConfig.getOutputAudioPath(), guiConfig.getOutputAudioPattern() + '_' + String.format("%03d", i));
+            //doOnLineConversion(text);
         }
     }
 
     public static void doOfflineConversion (String text) throws IOException, EncoderException, InterruptedException {
-        new EspeakTTS().generateAudio(language, text, filePath, filePattern);
+        System.out.println(guiConfig.toString());
+        new EspeakTTS().generateAudio(guiConfig.getLanguage(), text, guiConfig.getOutputAudioPath(), guiConfig.getOutputAudioPattern());
     }
 
     public static void doOfflineConversion (String[] text) throws IOException, EncoderException, InterruptedException {
+        System.out.println(guiConfig.toString());
         Integer i = 0;
         for (String subText: text) {
             i++;
-            new EspeakTTS().generateAudio(language, subText, filePath, filePattern + '_' + String.format("%03d", i));
+            new EspeakTTS().generateAudio(guiConfig.getLanguage(), subText, guiConfig.getOutputAudioPath(), guiConfig.getOutputAudioPattern() + '_' + String.format("%03d", i));
         }
     }
 
@@ -85,8 +89,8 @@ public class GuiReader {
 
     }
     public static void showWindow() {
-        JFrame frame = new JFrame("Demo application");
-        frame.setSize(600, 150);
+        JFrame frame = new JFrame("uoc-reader");
+        frame.setSize(600, 250);
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 
         JPanel panel = new JPanel();
@@ -100,9 +104,9 @@ public class GuiReader {
 
         panel.setLayout(null);
         if (System.getProperty("os.name").contains("Windows"))
-            current_dir = new File(System.getenv("USERPROFILE"));
+            currentDir = new File(System.getenv("USERPROFILE"));
         else
-            current_dir = new File(System.getProperty("user.home"));
+            currentDir = new File(System.getProperty("user.home"));
 
         JLabel odfFileLabel = new JLabel("Odf File:");
         odfFileLabel.setBounds(10, 10, 80, 25);
@@ -116,11 +120,11 @@ public class GuiReader {
         odfButton.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 JFileChooser fileChooser = new JFileChooser();
-                fileChooser.setCurrentDirectory(current_dir);
+                fileChooser.setCurrentDirectory(currentDir);
                 int result = fileChooser.showOpenDialog(odfButton);
                 if (result == JFileChooser.APPROVE_OPTION) {
                     File selectedFile = fileChooser.getSelectedFile();
-                    current_dir=new File(selectedFile.getParent());
+                    currentDir=new File(selectedFile.getParent());
                     odfTextField.setText(selectedFile.getAbsolutePath());
                     odfFileName = selectedFile.getAbsolutePath();
                 }
@@ -128,6 +132,65 @@ public class GuiReader {
         });
         odfButton.setBounds(500, 10, 80, 25);
         panel.add(odfButton);
+
+
+        final JCheckBox onlineCheckBox = new JCheckBox("Online processing");
+        onlineCheckBox.setBounds(5, 70, 200, 25);
+        onlineCheckBox.setEnabled(false);
+        panel.add(onlineCheckBox);
+
+        final JLabel languageLabel = new JLabel("Choose Language");
+
+        final JRadioButton esRadioButton = new JRadioButton("Spanish");
+        esRadioButton.setEnabled(false);
+
+        final JRadioButton enRadioButton = new JRadioButton("English");
+        enRadioButton.setEnabled(false);
+
+        final JRadioButton caRadioButton = new JRadioButton("Catalonian");
+        caRadioButton.setEnabled(false);
+
+        ButtonGroup languageGroup = new ButtonGroup();
+        languageGroup.add(esRadioButton);
+        languageGroup.add(enRadioButton);
+        languageGroup.add(caRadioButton);
+
+        final JPanel languagePanel = new JPanel(new FlowLayout(FlowLayout.LEFT));
+        languagePanel.setBounds(5, 100, 150, 110);
+
+        languagePanel.add(languageLabel);
+        languagePanel.add(esRadioButton);
+        languagePanel.add(caRadioButton);
+        languagePanel.add(enRadioButton);
+
+        languagePanel.setBorder(BorderFactory.createLineBorder(Color.gray));
+
+        panel.add(languagePanel);
+
+        final JLabel splitLabel = new JLabel("Split by strategy");
+
+        final JRadioButton pageBreakRadioButton = new JRadioButton("Split by Pages");
+        pageBreakRadioButton.setBounds(205, 110, 150, 25);
+        pageBreakRadioButton.setEnabled(false);
+        panel.add(pageBreakRadioButton);
+
+        final JRadioButton singlePageRadiobutton = new JRadioButton("single audio file");
+        singlePageRadiobutton.setBounds(205, 130, 150, 25);
+        singlePageRadiobutton.setEnabled(false);
+        panel.add(singlePageRadiobutton);
+
+        ButtonGroup pageGroup = new ButtonGroup();
+        pageGroup.add(pageBreakRadioButton);
+        pageGroup.add(singlePageRadiobutton);
+
+        final JPanel pagePanel = new JPanel(new FlowLayout(FlowLayout.LEFT));
+        pagePanel.setBorder(BorderFactory.createLineBorder(Color.gray));
+        pagePanel.setBounds(160, 100, 150, 110);
+        pagePanel.add(splitLabel);
+        pagePanel.add(pageBreakRadioButton);
+        pagePanel.add(singlePageRadiobutton);
+
+        panel.add(pagePanel);
 
         JLabel configLabel = new JLabel("Config File:");
         configLabel.setBounds(10, 40, 80, 25);
@@ -137,61 +200,108 @@ public class GuiReader {
         configTextField.setBounds(100, 40, 400, 25);
         panel.add(configTextField);
 
+
         final JButton configButton = new JButton("Open");
         configButton.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 JFileChooser fileChooser = new JFileChooser();
-                fileChooser.setCurrentDirectory(current_dir);
+                configDir = new File("config");
+                fileChooser.setCurrentDirectory(configDir);
                 int result = fileChooser.showOpenDialog(configButton);
+
                 if (result == JFileChooser.APPROVE_OPTION) {
                     File selectedFile = fileChooser.getSelectedFile();
                     configTextField.setText(selectedFile.getAbsolutePath());
+
+                    Config setup = null;
+                    try {
+                        setup = new Config(configTextField.getText());
+                        configFileName = configTextField.getText();
+                    } catch (IOException e1) {
+                        JOptionPane.showMessageDialog(null, e1.getMessage(), "IO Exception", JOptionPane.ERROR_MESSAGE);
+                    } catch (SAXException e1) {
+                        JOptionPane.showMessageDialog(null, e1.getMessage(), "SAX Exception", JOptionPane.ERROR_MESSAGE);
+                    } catch (ParserConfigurationException e1) {
+                        JOptionPane.showMessageDialog(null, e1.getMessage(), "Parse Exception", JOptionPane.ERROR_MESSAGE);
+                    } catch (NullPointerException e1) {
+                        JOptionPane.showMessageDialog(null, "Config file is not set, please set and retry", "Configuration file name", JOptionPane.ERROR_MESSAGE);
+                    }
+
+                    language = setup.getLanguage();
+                    filePattern = setup.getOutputAudioPattern();
+                    filePath = setup.getOutputAudioPath();
+                    onlineTTSServiceUrl = setup.getTtsServiceUrl();
+                    splitMode = setup.getSplitMode();
+
+                    onlineCheckBox.setEnabled(true);
+                    esRadioButton.setEnabled(true);
+                    enRadioButton.setEnabled(true);
+                    caRadioButton.setEnabled(true);
+
+                    pageBreakRadioButton.setEnabled(true);
+                    singlePageRadiobutton.setEnabled(true);
+
+
+                    if(setup.getIsOnline())
+                        onlineCheckBox.setSelected(true);
+
+
+                    if(setup.getLanguage().equals("ES"))
+                        esRadioButton.setSelected(true);
+                    else if(setup.getLanguage().equals("EN"))
+                        enRadioButton.setSelected(true);
+                    else if(setup.getLanguage().equals("CA"))
+                        caRadioButton.setSelected(true);
+
+                    if(setup.getSplitMode().equals("PAGE-BREAK"))
+                        pageBreakRadioButton.setSelected(true);
+                    else
+                        singlePageRadiobutton.setSelected(true);
+
+                    guiConfig = setup;
                 }
             }
         });
         configButton.setBounds(500, 40, 80, 25);
         panel.add(configButton);
 
+
         JButton startButton = new JButton("Start");
         startButton.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
-                Config setup = null;
-                try {
-                    setup = new Config(configTextField.getText());
-                    configFileName = configTextField.getText();
-                    //setup = new Config(configFileName);
-                } catch (IOException e1) {
-                    JOptionPane.showMessageDialog(null, e1.getMessage(), "IO Exception", JOptionPane.ERROR_MESSAGE);
-                } catch (SAXException e1) {
-                    JOptionPane.showMessageDialog(null, e1.getMessage(), "SAX Exception", JOptionPane.ERROR_MESSAGE);
-                } catch (ParserConfigurationException e1) {
-                    JOptionPane.showMessageDialog(null, e1.getMessage(), "Parse Exception", JOptionPane.ERROR_MESSAGE);
-                } catch (NullPointerException e1) {
-                    JOptionPane.showMessageDialog(null, "Config file is not set, please set and retry", "Configuration file name", JOptionPane.ERROR_MESSAGE);
-                }
-
-
                 OdfDocument odfDocument = null;
+
+                if(esRadioButton.isSelected())
+                    guiConfig.setLanguage("ES");
+                else if (caRadioButton.isSelected())
+                    guiConfig.setLanguage("CA");
+                else if (enRadioButton.isSelected())
+                    guiConfig.setLanguage("EN");
+
+                if (onlineCheckBox.isSelected())
+                    guiConfig.setIsOnline(true);
+                else
+                    guiConfig.setIsOnline(false);
+
+                if(pageBreakRadioButton.isSelected())
+                    guiConfig.setSplitMode("PAGE-BREAK");
+                else
+                    guiConfig.setSplitMode("UNIQUE");
+
+
                 try {
                     odfDocument = OdfDocument.loadDocument(odfTextField.getText());
                     odfFileName = odfTextField.getText();
-                    //odfDocument = OdfDocument.loadDocument(odfFileName);
                 } catch (Exception e1) {
                     JOptionPane.showMessageDialog(null, e1.getMessage(), "Lang Exception", JOptionPane.ERROR_MESSAGE);
                 }
 
                 String text = null;
 
-                language = setup.getLanguage();
-                filePattern = setup.getOutputAudioPattern();
-                filePath = setup.getOutputAudioPath();
-                onlineTTSServiceUrl = setup.getTtsServiceUrl();
-                splitMode = setup.getSplitMode();
-
                 if (odfDocument instanceof OdfTextDocument) {
                     ODTParser docParser = null;
                     try {
-                        docParser = new ODTParser(odfDocument, language);
+                        docParser = new ODTParser(odfDocument, guiConfig.getLanguage());
                     } catch (Exception e1) {
                         JOptionPane.showMessageDialog(null, e1.getMessage(), "Exception", JOptionPane.ERROR_MESSAGE);
                     }
@@ -200,7 +310,7 @@ public class GuiReader {
                 else if (odfDocument instanceof OdfSpreadsheetDocument) {
                     ODSParser docParser = null;
                     try {
-                        docParser = new ODSParser(odfDocument, language);
+                        docParser = new ODSParser(odfDocument, guiConfig.getLanguage());
                     } catch (Exception e1) {
                         e1.printStackTrace();
                     }
@@ -209,7 +319,7 @@ public class GuiReader {
                 else if (odfDocument instanceof OdfPresentationDocument) {
                     ODPParser docParser = null;
                     try {
-                        docParser = new ODPParser(odfDocument, language);
+                        docParser = new ODPParser(odfDocument, guiConfig.getLanguage());
                     } catch (Exception e1) {
                         e1.printStackTrace();
                     }
@@ -219,15 +329,15 @@ public class GuiReader {
 
                 String[] pages = processText(text);
 
-                log.log(Level.INFO, "Document language: " + language);
-                log.log(Level.INFO, "Output folder: " + filePath);
-                log.log(Level.INFO, "Output file name: " + filePattern);
-                log.log(Level.INFO, "Split file mode: " + splitMode);
+                log.log(Level.INFO, "Document language: " + guiConfig.getLanguage());
+                log.log(Level.INFO, "Output folder: " + guiConfig.getOutputAudioPath());
+                log.log(Level.INFO, "Output file name: " + guiConfig.getOutputAudioPattern());
+                log.log(Level.INFO, "Split file mode: " + guiConfig.getSplitMode());
                 log.log(Level.INFO, "Output file number: " + pages.length);
-                log.log(Level.INFO, "Is online?: " + setup.getIsOnline());
+                log.log(Level.INFO, "Is online?: " + guiConfig.getIsOnline());
                 log.log(Level.INFO, "Start of the conversion process");
 
-                if (setup.getIsOnline()) {
+                if (guiConfig.getIsOnline()) {
                     try {
                         if (pages.length == 1 )
                             doOnLineConversion(pages[0]);

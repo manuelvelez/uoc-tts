@@ -34,8 +34,10 @@ public class AudioManager {
         EncodingAttributes attrs = new EncodingAttributes();
         attrs.setFormat("ogg");
         attrs.setAudioAttributes(audio);
+
         Encoder encoder = new Encoder();
         encoder.encode(source, target, attrs);
+
         source.delete();
     }
 

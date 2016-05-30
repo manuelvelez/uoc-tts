@@ -30,7 +30,16 @@ public class EspeakTTS extends TTS{
         File pathDirectory = new File(filePath);
         pathDirectory.mkdirs();
         log.debug(text);
-        String [] cmd = {"espeak", "-w" + audioFileName, "-v"+languages.get(language), "-s150", "-p0", text };
+
+        String espeakDir="";
+        String espeakDataPath="";
+
+        if (System.getProperty("os.name").contains("Windows"))
+            espeakDir = ".\\espeak-win";
+        else
+            espeakDir = "./espeak-linux";
+
+        String [] cmd = {espeakDir + "/espeak", "--path=" + espeakDir ,  "-w" + audioFileName, "-v"+languages.get(language), "-s125", "-p0", text };
         Process espeak = Runtime.getRuntime().exec(cmd);
         espeak.waitFor();
 

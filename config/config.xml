@@ -1,9 +1,9 @@
 <?xml version="1.1" encoding="UTF-8"?>
 <config>
     <tts>
-        <online>false</online>
+        <online>true</online>
         <url>http://translate.google.com/translate_tts</url>
-        <language>ES</language>
+        <language>EN</language>
     </tts>
     <reader>
         <split-by>PAGE-BREAK</split-by>

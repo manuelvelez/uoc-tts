@@ -52,9 +52,9 @@ public class ODTParser extends ODFParser {
     private static final Map<String, String> cellMap;
     static {
         Map<String, String> aMap = new HashMap<String, String>();
-        aMap.put("ES", ", celda, ");
-        aMap.put("EN", ", cell, ");
-        aMap.put("CA", ", cel·la, ");
+        aMap.put("ES", "celda, ");
+        aMap.put("EN", "cell, ");
+        aMap.put("CA", "cel·la, ");
         cellMap = Collections.unmodifiableMap(aMap);
     }
 
@@ -109,7 +109,7 @@ public class ODTParser extends ODFParser {
         this.languageDependentTableName=tableMap.get(documentLanguage);
         this.languageDependentRowName=rowMap.get(documentLanguage);
         this.languageDependentCellName=cellMap.get(documentLanguage);
-        this.languageDependentHeaderName=tableMap.get(documentLanguage);
+        this.languageDependentHeaderName=headerMap.get(documentLanguage);
 
         List<String> styleList = new ArrayList<String>();
         NodeList styles= content.getElementsByTagName("style:paragraph-properties");
@@ -130,6 +130,7 @@ public class ODTParser extends ODFParser {
             text = text + this.recurse(list.item(0).getChildNodes().item(j));
         }
         textSplitted = this.text.replaceAll("(.{0,"+ 100+"})\\b", "$1\n").split("\n");
+        System.out.println(text);
     }
 
     public String recurse(Node node) {
@@ -147,7 +148,7 @@ public class ODTParser extends ODFParser {
             innerText.append(BREAK_MARK);
 
         else if (node instanceof TextImpl){
-            innerText.append(node.getTextContent() + ENDLN);
+            innerText.append(node.getTextContent() + "." + ENDLN);
         }
 
         else if (node instanceof TextAElement)

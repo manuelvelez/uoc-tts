@@ -15,6 +15,9 @@ import org.xml.sax.SAXException;
 
 import javax.xml.parsers.ParserConfigurationException;
 import java.io.IOException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
+
 import org.apache.log4j.Logger;
 
 /**
@@ -114,7 +117,8 @@ public class CliReader {
         }
 
         this.language = setup.getLanguage();
-        this.filePattern = setup.getOutputAudioPattern();
+        String date = new SimpleDateFormat("yyyyMMdd-HHmmss").format(new Date());
+        this.filePattern = setup.getOutputAudioPattern()  + '_' + date;
         this.filePath = setup.getOutputAudioPath();
         this.onlineTTSServiceUrl = setup.getTtsServiceUrl();
         this.splitMode = setup.getSplitMode();

@@ -123,8 +123,7 @@ public class Config {
     }
 
     public void setOutputAudioPattern(String outputAudioPattern) {
-        String date = new SimpleDateFormat("yyyyMMdd-HHmmss").format(new Date());
-        this.outputAudioPattern = outputAudioPattern + '_' + date;
+        this.outputAudioPattern = outputAudioPattern;
     }
 
     public String getXsdPath() {

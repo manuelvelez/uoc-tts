@@ -113,7 +113,6 @@ public class ODTParser extends ODFParser {
 
         List<String> styleList = new ArrayList<String>();
         NodeList styles= content.getElementsByTagName("style:paragraph-properties");
-        System.out.println(styles.getLength());
         for (int j = 0; j<styles.getLength(); j++){
             Node singleNode = styles.item(j);
             if (singleNode.getAttributes().getNamedItem("fo:break-before") != null ){
@@ -130,7 +129,6 @@ public class ODTParser extends ODFParser {
             text = text + this.recurse(list.item(0).getChildNodes().item(j));
         }
         textSplitted = this.text.replaceAll("(.{0,"+ 100+"})\\b", "$1\n").split("\n");
-        System.out.println(text);
     }
 
     public String recurse(Node node) {
@@ -148,7 +146,7 @@ public class ODTParser extends ODFParser {
             innerText.append(BREAK_MARK);
 
         else if (node instanceof TextImpl){
-            innerText.append(node.getTextContent() + "." + ENDLN);
+            innerText.append(node.getTextContent() + ENDLN);
         }
 
         else if (node instanceof TextAElement)

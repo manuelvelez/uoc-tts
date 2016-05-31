@@ -17,6 +17,8 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.File;
 import java.io.IOException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 
 /**
  * Created by mvelezm on 26/04/16.
@@ -42,12 +44,10 @@ public class GuiReader {
 
 
     public static void doOnLineConversion (String text) throws IOException, EncoderException {
-        System.out.println(guiConfig.toString());
         new OnLineTTS(onlineTTSServiceUrl).generateAudio(guiConfig.getLanguage(), text, guiConfig.getOutputAudioPath(), guiConfig.getOutputAudioPattern());
     }
 
     public static void doOnLineConversion (String[] text) throws IOException, EncoderException {
-        System.out.println(guiConfig.toString());
         Integer i = 0;
         for (String subText: text) {
             i++;
@@ -57,12 +57,10 @@ public class GuiReader {
     }
 
     public static void doOfflineConversion (String text) throws IOException, EncoderException, InterruptedException {
-        System.out.println(guiConfig.toString());
         new EspeakTTS().generateAudio(guiConfig.getLanguage(), text, guiConfig.getOutputAudioPath(), guiConfig.getOutputAudioPattern());
     }
 
     public static void doOfflineConversion (String[] text) throws IOException, EncoderException, InterruptedException {
-        System.out.println(guiConfig.toString());
         Integer i = 0;
         for (String subText: text) {
             i++;
@@ -167,7 +165,7 @@ public class GuiReader {
 
         panel.add(languagePanel);
 
-        final JLabel splitLabel = new JLabel("Split by strategy");
+        final JLabel splitLabel = new JLabel("Split-by strategy");
 
         final JRadioButton pageBreakRadioButton = new JRadioButton("Split by Pages");
         pageBreakRadioButton.setBounds(205, 110, 150, 25);
@@ -259,6 +257,7 @@ public class GuiReader {
                         singlePageRadiobutton.setSelected(true);
 
                     guiConfig = setup;
+                    guiConfig.setOutputAudioPattern(filePattern);
                 }
             }
         });
@@ -329,6 +328,8 @@ public class GuiReader {
 
                 String[] pages = processText(text);
 
+                String date = new SimpleDateFormat("yyyyMMdd-HHmmss").format(new Date());
+                guiConfig.setOutputAudioPattern(filePattern + '_' + date);
                 log.log(Level.INFO, "Document language: " + guiConfig.getLanguage());
                 log.log(Level.INFO, "Output folder: " + guiConfig.getOutputAudioPath());
                 log.log(Level.INFO, "Output file name: " + guiConfig.getOutputAudioPattern());

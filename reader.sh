@@ -1,14 +1,15 @@
 #!/bin/bash
 
 DIR=$(dirname $0)
-JAVA_OPTS="-Dlog4j.configuration=file:./config/log4j.properties  -Xms512m -Xmx2048m"
+JAVA_OPTS="-Dlog4j.configuration=file:./config/log4j.properties -Xms512m -Xmx2048m"
 
-is_espeak_path=$(which espeak)
+./espeak-linux/espeak --path=./espeak-linux -wtestFile.wav "hola"
 if [ $? -eq 0 ]
 then
-	espeak_result="espeak is installed in the following path: $is_espeak_path"
+	rm testFile.wav
+	espeak_result="espeak is usable"
 else
-	espeak_result="espeak is not installed. You can install it by running sudo apt-get install espeak"
+	espeak_result="There is a problem with the espeak distribution"
 fi
 
 echo [$(date +%F-%H:%M:%S)][Reader][$espeak_result]

@@ -1,10 +1,12 @@
 set READER_CMD_LINE_ARGS=%*
-set JAVA_OPTS="-Dlog4j.configuration=file:config\log4j.properties -Xms512m -Xmx2048m"
+set HEAP=-Xms512m -Xmx2048m
+set LOG_CONFIG=-Dlog4j.configuration=file:config\log4j.properties
+set JAVA_OPTS= %HEAP% %LOG_CONFIG%
 
 @echo %READER_CMD_LINE_ARGS%
 
 echo off
-espeak -wtestFile.wav "hola"
+.\espeak-win\espeak.exe --path=.\espeak-win -wtestFile.wav "hola"
 set RESULT=%errorLevel%
 
 IF %RESULT% == 0 (

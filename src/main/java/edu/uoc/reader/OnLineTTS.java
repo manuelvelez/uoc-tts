@@ -25,8 +25,9 @@ public class OnLineTTS extends TTS {
     public void generateAudio(String language, String text, String filePath, String fileName) throws IOException, EncoderException {
         String[] textSplitted = text.replaceAll("(.{0,"+ 100+"})\\b", "$1\n").split("\n");
 
-        File output = new File(filePath+"/"+ fileName+".mp3");
-        File pathDirectory = new File(filePath);
+        File output = new File(filePath + "/temp/"+ fileName+".mp3");
+        File pathDirectory = new File(filePath + "/temp/");
+
         pathDirectory.mkdirs();
         BufferedOutputStream out = null;
         ByteArrayOutputStream bufOut = new ByteArrayOutputStream();
@@ -61,6 +62,8 @@ public class OnLineTTS extends TTS {
         }
         out.close();
 
-        new AudioManager().generateOggFile(output.getPath());
+        String targetPath = filePath + "/" + fileName + ".ogg";
+
+        new AudioManager().generateOggFile(output.getPath(), targetPath);
     }
 }

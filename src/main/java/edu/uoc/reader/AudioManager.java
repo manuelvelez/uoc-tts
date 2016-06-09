@@ -13,10 +13,11 @@ import java.nio.file.Files;
 public class AudioManager {
     private static final Logger log= Logger.getLogger( AudioManager.class.getName());
 
-    public void generateOggFile(String audioPath) throws EncoderException {
+    public void generateOggFile(String audioPath, String oggAudioPath) throws EncoderException {
 
         File source = new File(audioPath);
-        String targetPath = audioPath.substring(0, audioPath.lastIndexOf(".")) + ".ogg";
+        String targetPath = oggAudioPath;
+
         File target = new File(targetPath);
         try {
             Files.deleteIfExists(target.toPath());

@@ -14,6 +14,7 @@ import org.odftoolkit.odfdom.doc.OdfTextDocument;
 import org.xml.sax.SAXException;
 
 import javax.xml.parsers.ParserConfigurationException;
+import java.io.File;
 import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -198,6 +199,9 @@ public class CliReader {
                 System.exit(2);
             }
         }
+        log.log(Level.INFO, "Cleaning the house (removing temporal files)");
+        File tempDir = new File(filePath + "/temp/");
+        tempDir.delete();
         log.log(Level.INFO, "Process finished");
     }
 }

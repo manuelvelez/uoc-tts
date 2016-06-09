@@ -26,9 +26,11 @@ public class EspeakTTS extends TTS{
 
     @Override
     public void generateAudio(String language, String text, String filePath, String fileName) throws IOException, EncoderException, InterruptedException {
-        String audioFileName = filePath + "/" + fileName + ".wav";
-        File pathDirectory = new File(filePath);
+
+        String audioFileName = filePath + "/temp/" + fileName + ".wav";
+        File pathDirectory = new File(filePath + "/temp/");
         pathDirectory.mkdirs();
+
         log.debug(text);
 
         String espeakDir="";
@@ -43,6 +45,7 @@ public class EspeakTTS extends TTS{
         Process espeak = Runtime.getRuntime().exec(cmd);
         espeak.waitFor();
 
-        new AudioManager().generateOggFile(audioFileName);
+        String targetPath = filePath + "/" + fileName + ".ogg";
+        new AudioManager().generateOggFile(audioFileName, targetPath);
     }
 }

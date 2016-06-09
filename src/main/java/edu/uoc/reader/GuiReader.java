@@ -11,6 +11,7 @@ import org.odftoolkit.odfdom.doc.OdfTextDocument;
 import org.xml.sax.SAXException;
 
 import javax.swing.*;
+import javax.swing.border.Border;
 import javax.xml.parsers.ParserConfigurationException;
 import java.awt.*;
 import java.awt.event.ActionEvent;
@@ -89,6 +90,7 @@ public class GuiReader {
     public static void showWindow() {
         JFrame frame = new JFrame("uoc-reader");
         frame.setSize(600, 250);
+        frame.setResizable(false);
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 
         JPanel panel = new JPanel();
@@ -98,7 +100,7 @@ public class GuiReader {
         frame.setVisible(true);
     }
 
-    private static void placeComponents(JPanel panel) {
+    private static void placeComponents(final JPanel panel) {
 
         panel.setLayout(null);
         if (System.getProperty("os.name").contains("Windows"))
@@ -196,6 +198,8 @@ public class GuiReader {
 
         final JTextField configTextField = new JTextField(200);
         configTextField.setBounds(100, 40, 400, 25);
+        configTextField.setEditable(false);
+        configTextField.setToolTipText("This text field is not editable and should be filled using the open button");
         panel.add(configTextField);
 
 
@@ -265,11 +269,12 @@ public class GuiReader {
         panel.add(configButton);
 
 
+
+
         JButton startButton = new JButton("Start");
         startButton.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 OdfDocument odfDocument = null;
-
                 if(esRadioButton.isSelected())
                     guiConfig.setLanguage("ES");
                 else if (caRadioButton.isSelected())
@@ -286,7 +291,6 @@ public class GuiReader {
                     guiConfig.setSplitMode("PAGE-BREAK");
                 else
                     guiConfig.setSplitMode("UNIQUE");
-
 
                 try {
                     odfDocument = OdfDocument.loadDocument(odfTextField.getText());
@@ -325,7 +329,6 @@ public class GuiReader {
                     text = docParser.getText();
                 }
 
-
                 String[] pages = processText(text);
 
                 String date = new SimpleDateFormat("yyyyMMdd-HHmmss").format(new Date());
@@ -344,6 +347,7 @@ public class GuiReader {
                             doOnLineConversion(pages[0]);
                         else
                             doOnLineConversion(pages);
+                        JOptionPane.showMessageDialog(null, "Online conversion process finished!", "Online Conversion process status", JOptionPane.PLAIN_MESSAGE);
                     } catch (IOException e1) {
                         log.log(Level.ERROR, e1.getMessage());
                         JOptionPane.showMessageDialog(null, e1.getMessage(), "Conversion Exception", JOptionPane.ERROR_MESSAGE);
@@ -357,6 +361,7 @@ public class GuiReader {
                             doOfflineConversion(pages[0]);
                         else
                             doOfflineConversion(pages);
+                        JOptionPane.showMessageDialog(null, "Offline conversion process finished!", "Offline Conversion process status", JOptionPane.PLAIN_MESSAGE);
                     } catch (IOException e1) {
                         log.log(Level.ERROR, e1.getMessage());
                         JOptionPane.showMessageDialog(null, e1.getMessage(), "Conversion Exception", JOptionPane.ERROR_MESSAGE);
@@ -368,7 +373,10 @@ public class GuiReader {
                         JOptionPane.showMessageDialog(null, e1.getMessage(), "Interrupted Exception", JOptionPane.ERROR_MESSAGE);
                     }
                 }
-                log.log(Level.INFO, "Process finished");
+                log.log(Level.INFO, "Cleaning the house (removing temporal files)");
+                File tempDir = new File(filePath + "/temp/");
+                tempDir.delete();
+                log.log(Level.INFO, "Process finished!");
 
             }
         });

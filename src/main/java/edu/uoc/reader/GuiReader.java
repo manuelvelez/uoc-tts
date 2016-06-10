@@ -12,6 +12,7 @@ import org.xml.sax.SAXException;
 
 import javax.swing.*;
 import javax.swing.border.Border;
+import javax.swing.filechooser.FileNameExtensionFilter;
 import javax.xml.parsers.ParserConfigurationException;
 import java.awt.*;
 import java.awt.event.ActionEvent;
@@ -120,6 +121,7 @@ public class GuiReader {
         odfButton.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 JFileChooser fileChooser = new JFileChooser();
+                fileChooser.setFileFilter(new FileNameExtensionFilter("Odf file filter", "odt", "ods", "odp"));
                 fileChooser.setCurrentDirectory(currentDir);
                 int result = fileChooser.showOpenDialog(odfButton);
                 if (result == JFileChooser.APPROVE_OPTION) {
@@ -209,6 +211,7 @@ public class GuiReader {
                 JFileChooser fileChooser = new JFileChooser();
                 configDir = new File("config");
                 fileChooser.setCurrentDirectory(configDir);
+                fileChooser.setFileFilter(new FileNameExtensionFilter("Config files", "xml"));
                 int result = fileChooser.showOpenDialog(configButton);
 
                 if (result == JFileChooser.APPROVE_OPTION) {
@@ -341,13 +344,15 @@ public class GuiReader {
                 log.log(Level.INFO, "Is online?: " + guiConfig.getIsOnline());
                 log.log(Level.INFO, "Start of the conversion process");
 
+                String processingType = null;
+
                 if (guiConfig.getIsOnline()) {
+                    processingType = "Online";
                     try {
                         if (pages.length == 1 )
                             doOnLineConversion(pages[0]);
                         else
                             doOnLineConversion(pages);
-                        JOptionPane.showMessageDialog(null, "Online conversion process finished!", "Online Conversion process status", JOptionPane.PLAIN_MESSAGE);
                     } catch (IOException e1) {
                         log.log(Level.ERROR, e1.getMessage());
                         JOptionPane.showMessageDialog(null, e1.getMessage(), "Conversion Exception", JOptionPane.ERROR_MESSAGE);
@@ -356,12 +361,13 @@ public class GuiReader {
                         JOptionPane.showMessageDialog(null, e1.getMessage(), "Encoder Exception", JOptionPane.ERROR_MESSAGE);
                     }
                 } else {
+                    processingType = "Offline";
                     try {
                         if (pages.length == 1 )
                             doOfflineConversion(pages[0]);
                         else
                             doOfflineConversion(pages);
-                        JOptionPane.showMessageDialog(null, "Offline conversion process finished!", "Offline Conversion process status", JOptionPane.PLAIN_MESSAGE);
+
                     } catch (IOException e1) {
                         log.log(Level.ERROR, e1.getMessage());
                         JOptionPane.showMessageDialog(null, e1.getMessage(), "Conversion Exception", JOptionPane.ERROR_MESSAGE);
@@ -373,9 +379,12 @@ public class GuiReader {
                         JOptionPane.showMessageDialog(null, e1.getMessage(), "Interrupted Exception", JOptionPane.ERROR_MESSAGE);
                     }
                 }
+
                 log.log(Level.INFO, "Cleaning the house (removing temporal files)");
                 File tempDir = new File(filePath + "/temp/");
                 tempDir.delete();
+                JOptionPane.showMessageDialog(null, processingType + " conversion process finished!", processingType + " Conversion process status", JOptionPane.PLAIN_MESSAGE);
+
                 log.log(Level.INFO, "Process finished!");
 
             }

@@ -22,7 +22,8 @@ import java.util.Date;
 import org.apache.log4j.Logger;
 
 /**
- * Created by mvelezm on 26/04/16.
+ * Created by Manuel Vélez on 26/04/16.
+ * This class manages the execution of the application in command line mode.
  */
 
 public class CliReader {
@@ -35,10 +36,22 @@ public class CliReader {
     private String onlineTTSServiceUrl;
     private String splitMode;
 
+    /**
+     * Recives a text string and convert it to audio using the online provider
+     * @param text
+     * @throws IOException
+     * @throws EncoderException
+     */
     public void doOnLineConversion (String text) throws IOException, EncoderException {
         new OnLineTTS(onlineTTSServiceUrl).generateAudio(language, text, filePath, filePattern);
     }
 
+    /**
+     * Recives an array of text strings and convert them to several audios using the online provider
+     * @param text
+     * @throws IOException
+     * @throws EncoderException
+     */
     public void doOnLineConversion (String[] text) throws IOException, EncoderException {
         Integer i = 0;
         for (String subText: text) {
@@ -47,10 +60,24 @@ public class CliReader {
         }
     }
 
+    /**
+     * Recives a text string and convert it to audio using the offline provider
+     * @param text
+     * @throws IOException
+     * @throws EncoderException
+     * @throws InterruptedException
+     */
     public void doOfflineConversion (String text) throws IOException, EncoderException, InterruptedException {
         new EspeakTTS().generateAudio(language, text, filePath, filePattern);
     }
 
+    /**
+     * Recives an array of text strings and convert them to several audios using the online provider
+     * @param text
+     * @throws IOException
+     * @throws EncoderException
+     * @throws InterruptedException
+     */
     public void doOfflineConversion (String[] text) throws IOException, EncoderException, InterruptedException {
         Integer i = 0;
         for (String subText: text) {
@@ -59,6 +86,11 @@ public class CliReader {
         }
     }
 
+    /**
+     * Creates an array of strings from a string that contains PAGE-BREAK marks
+     * @param text
+     * @return
+     */
     public String[] processText(String text) {
         String[] pages = new String [] {"Empty"};
         if (splitMode.equals("PAGE-BREAK")){
@@ -71,10 +103,18 @@ public class CliReader {
         return pages;
     }
 
+    /**
+     * Constructor of the class, execute the conversion in command line mode using the options and the command line
+     * arguments
+     * @param args
+     * @param options
+     */
+
     CliReader(String[] args, Options options) {
         CommandLineParser parser = new BasicParser();
         CommandLine cmd = null;
 
+        //Parse command line arguments
         try {
             cmd = parser.parse(options, args);
             if (cmd.hasOption("config") && cmd.hasOption("doc")) {
@@ -92,6 +132,7 @@ public class CliReader {
             System.exit(1);
         }
 
+        //Parse xml config file
         Config setup = null;
         try {
             setup = new Config(configFileName);
@@ -106,6 +147,7 @@ public class CliReader {
             System.exit(1);
         }
 
+        //Load odf file
         OdfDocument odfDocument = null;
         try {
             odfDocument = OdfDocument.loadDocument(odfFileName);
@@ -125,8 +167,9 @@ public class CliReader {
         this.splitMode = setup.getSplitMode();
 
 
-
+        //Call the suitable parser from ODFParser factory
         String text = null;
+        //ODTParser
         if (odfDocument instanceof OdfTextDocument) {
             ODTParser docParser = null;
             try {
@@ -136,6 +179,7 @@ public class CliReader {
             }
             text = docParser.getText();
         }
+        //ODSParser
         else if (odfDocument instanceof OdfSpreadsheetDocument) {
             ODSParser docParser = null;
             try {
@@ -145,6 +189,7 @@ public class CliReader {
             }
             text = docParser.getText();
         }
+        //ODPParser
         else if (odfDocument instanceof OdfPresentationDocument) {
             ODPParser docParser = null;
             try {
@@ -154,6 +199,7 @@ public class CliReader {
             }
             text = docParser.getText();
         }
+        //Unsuported file type
         else {
             log.log(Level.ERROR, "Unsupported file type: " + odfDocument.getClass());
             System.exit(1);
@@ -169,6 +215,7 @@ public class CliReader {
         log.log(Level.INFO, "Is online?: " + setup.getIsOnline());
         log.log(Level.INFO, "Start of the conversion process");
 
+        //Conversion of text depending on the online tag.
         if (setup.getIsOnline()) {
             try {
                 if (pages.length == 1 )
@@ -201,6 +248,7 @@ public class CliReader {
         }
         log.log(Level.INFO, "Cleaning the house (removing temporal files)");
         File tempDir = new File(filePath + "/temp/");
+        //Deletion of temporary files
         tempDir.delete();
         log.log(Level.INFO, "Process finished");
     }

@@ -8,10 +8,21 @@ import java.io.*;
 import java.nio.file.Files;
 
 /**
- * Created by mvelezm on 1/05/16.
+ * This class manages the conversion of audio files to ogg
+ * Created by Manuel Vélez Martínez on 1/05/16.
+ *
  */
 public class AudioManager {
     private static final Logger log= Logger.getLogger( AudioManager.class.getName());
+
+    /**
+     * This method convert the audio file in audioPath to an ogg file stored in oggAudioPath. audioPath File is deleted
+     * after conversion
+     *
+     * @param audioPath
+     * @param oggAudioPath
+     * @throws EncoderException
+     */
 
     public void generateOggFile(String audioPath, String oggAudioPath) throws EncoderException {
 
@@ -42,6 +53,10 @@ public class AudioManager {
         source.delete();
     }
 
+    /**
+     * Empty class constructor
+     *
+     */
     AudioManager(){
     }
 }

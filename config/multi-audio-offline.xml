@@ -1,0 +1,14 @@
+<?xml version="1.1" encoding="UTF-8"?>
+<config>
+    <tts>
+        <online>false</online>
+        <url>http://translate.google.com/translate_tts</url>
+        <language>ES</language>
+    </tts>
+    <reader>
+        <split-by>PAGE-BREAK</split-by>
+        <alternatives>true</alternatives>
+        <output-path>./output</output-path>
+        <output-pattern>testName</output-pattern>
+    </reader>
+</config>

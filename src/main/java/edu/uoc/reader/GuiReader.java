@@ -178,6 +178,7 @@ public class GuiReader {
         //Online checkbox
         final JCheckBox onlineCheckBox = new JCheckBox("Online processing");
         onlineCheckBox.setBounds(5, 70, 200, 25);
+        onlineCheckBox.setSelected(false);
         onlineCheckBox.setEnabled(false);
         panel.add(onlineCheckBox);
 
@@ -322,19 +323,27 @@ public class GuiReader {
         startButton.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 OdfDocument odfDocument = null;
-                if(esRadioButton.isSelected())
+
+                if (esRadioButton.isSelected())
                     guiConfig.setLanguage("ES");
                 else if (caRadioButton.isSelected())
                     guiConfig.setLanguage("CA");
                 else if (enRadioButton.isSelected())
                     guiConfig.setLanguage("EN");
 
-                if (onlineCheckBox.isSelected())
-                    guiConfig.setIsOnline(true);
-                else
-                    guiConfig.setIsOnline(false);
+                try {
+                    if (onlineCheckBox.isSelected())
+                        guiConfig.setIsOnline(true);
+                    else
+                        guiConfig.setIsOnline(false);
+                }
+                catch (Exception ex)
+                {
+                    JOptionPane.showMessageDialog(null, "No config file is specified", "Exception Reading Config", JOptionPane.ERROR_MESSAGE);
+                }
 
-                if(pageBreakRadioButton.isSelected())
+
+                if (pageBreakRadioButton.isSelected())
                     guiConfig.setSplitMode("PAGE-BREAK");
                 else
                     guiConfig.setSplitMode("UNIQUE");
@@ -356,8 +365,7 @@ public class GuiReader {
                         JOptionPane.showMessageDialog(null, e1.getMessage(), "Exception", JOptionPane.ERROR_MESSAGE);
                     }
                     text = docParser.getText();
-                }
-                else if (odfDocument instanceof OdfSpreadsheetDocument) {
+                } else if (odfDocument instanceof OdfSpreadsheetDocument) {
                     ODSParser docParser = null;
                     try {
                         docParser = new ODSParser(odfDocument, guiConfig.getLanguage());
@@ -365,8 +373,7 @@ public class GuiReader {
                         e1.printStackTrace();
                     }
                     text = docParser.getText();
-                }
-                else if (odfDocument instanceof OdfPresentationDocument) {
+                } else if (odfDocument instanceof OdfPresentationDocument) {
                     ODPParser docParser = null;
                     try {
                         docParser = new ODPParser(odfDocument, guiConfig.getLanguage());
@@ -393,7 +400,7 @@ public class GuiReader {
                 if (guiConfig.getIsOnline()) {
                     processingType = "Online";
                     try {
-                        if (pages.length == 1 )
+                        if (pages.length == 1)
                             doOnLineConversion(pages[0]);
                         else
                             doOnLineConversion(pages);
@@ -407,7 +414,7 @@ public class GuiReader {
                 } else {
                     processingType = "Offline";
                     try {
-                        if (pages.length == 1 )
+                        if (pages.length == 1)
                             doOfflineConversion(pages[0]);
                         else
                             doOfflineConversion(pages);

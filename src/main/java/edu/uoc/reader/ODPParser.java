@@ -1,21 +1,16 @@
 package edu.uoc.reader;
 
-import org.apache.log4j.Level;
 import org.apache.log4j.Logger;
 import org.apache.xerces.dom.TextImpl;
 import org.odftoolkit.odfdom.doc.OdfDocument;
 import org.odftoolkit.odfdom.dom.OdfContentDom;
-import org.odftoolkit.odfdom.dom.element.draw.DrawObjectElement;
-import org.odftoolkit.odfdom.dom.element.text.TextSequenceDeclElement;
 import org.odftoolkit.odfdom.dom.element.text.TextSoftPageBreakElement;
-import org.odftoolkit.odfdom.incubator.doc.draw.OdfDrawFrame;
-import org.odftoolkit.odfdom.incubator.doc.draw.OdfDrawImage;
-import org.odftoolkit.odfdom.incubator.doc.text.OdfTextParagraph;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 
 /**
- * Created by mvelezm on 14/04/16.
+ * Created by Manuel Vélez on 14/04/16.
+ * Concrete implementation of ODFParser class for Presentation files
  */
 public class ODPParser extends ODFParser {
     private static final Logger log= Logger.getLogger( ODSParser.class.getName());

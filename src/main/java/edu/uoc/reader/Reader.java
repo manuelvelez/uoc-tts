@@ -4,6 +4,9 @@ import org.apache.commons.cli.*;
 import org.apache.log4j.Level;
 import org.apache.log4j.Logger;
 
+/**
+ * Main class of the application. Call GuiReader or CliReader depending on the params.
+ */
 public class Reader {
     private static final Logger log= Logger.getLogger( Reader.class.getName());
 

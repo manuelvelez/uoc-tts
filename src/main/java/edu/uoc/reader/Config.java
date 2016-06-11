@@ -1,9 +1,8 @@
 package edu.uoc.reader;
 /**
- * Created by mvelezm on 23/03/16.
+ * Created by Manuel Vélez on 23/03/16.
+ * This class manages the configuration used in the app running
  */
-
-import com.sun.org.apache.xpath.internal.operations.Bool;
 import org.apache.log4j.Level;
 import org.apache.log4j.Logger;
 import org.jdom2.Document;
@@ -21,8 +20,6 @@ import javax.xml.validation.SchemaFactory;
 import javax.xml.validation.Validator;
 import java.io.File;
 import java.io.IOException;
-import java.text.SimpleDateFormat;
-import java.util.Date;
 
 public class Config {
     private static final Logger log= Logger.getLogger( Config.class.getName());
@@ -62,74 +59,150 @@ public class Config {
                 '}';
     }
 
+    /**
+     * configFile getter
+     * @return
+     */
     public String getConfigFile() {
         return configFile;
     }
 
+    /**
+     * configFile setter
+     * @param configFile
+     */
     public void setConfigFile(String configFile) {
         this.configFile = configFile;
     }
 
+    /**
+     * ttsServiceUrl getter
+     * @return
+     */
     public String getTtsServiceUrl() {
         return ttsServiceUrl;
     }
 
+    /**
+     * ttsServiceUrl setter
+     * @param ttsServiceUrl
+     */
     public void setTtsServiceUrl(String ttsServiceUrl) {
         this.ttsServiceUrl = ttsServiceUrl;
     }
 
+    /**
+     * isOnline getter
+     * @return
+     */
     public Boolean getIsOnline() {
         return isOnline;
     }
 
+    /**
+     * isOnline setter
+     * @param isOnline
+     */
     public void setIsOnline(Boolean isOnline) {
         this.isOnline = isOnline;
     }
 
+    /**
+     * language getter
+     * @return
+     */
     public String getLanguage() {
         return language;
     }
 
+    /**
+     * language setter
+     * @param language
+     */
     public void setLanguage(String language) {
         this.language = language;
     }
 
+    /**
+     * splitMode getter
+     * @return
+     */
     public String getSplitMode() {
         return splitMode;
     }
 
+    /**
+     * splitMode setter
+     * @param splitMode
+     */
     public void setSplitMode(String splitMode) {
         this.splitMode = splitMode;
     }
 
+    /**
+     * alternatives getter
+     * @return
+     */
     public Boolean getAlternatives() {
         return alternatives;
     }
 
+    /**
+     * Alternatives setter
+     * @param alternatives
+     */
     public void setAlternatives(Boolean alternatives) {
         this.alternatives = alternatives;
     }
 
+    /**
+     * outputAudioPath getter
+     * @return
+     */
     public String getOutputAudioPath() {
         return outputAudioPath;
     }
 
+    /**
+     * outputAudioPath setter
+     * @param outputAudioPath
+     */
     public void setOutputAudioPath(String outputAudioPath) {
         this.outputAudioPath = outputAudioPath;
     }
 
+    /**
+     * outputAudioPattern getter
+     * @return
+     */
     public String getOutputAudioPattern() {
         return outputAudioPattern;
     }
 
+    /**
+     * outputAudioPattern setter
+     * @param outputAudioPattern
+     */
     public void setOutputAudioPattern(String outputAudioPattern) {
         this.outputAudioPattern = outputAudioPattern;
     }
 
+    /**
+     * xsdPath getter
+     * @return
+     */
     public String getXsdPath() {
         return xsdPath;
     }
 
+    /**
+     * Config constructor. Parses the file and set the config
+     * @param configFile
+     * @throws IOException
+     * @throws SAXException
+     * @throws ParserConfigurationException
+     * @throws NullPointerException
+     */
     public Config(String configFile) throws IOException, SAXException, ParserConfigurationException, NullPointerException {
         this.configFile = configFile;
         Document configDocument = null;

@@ -4,13 +4,11 @@ import org.apache.log4j.Logger;
 import org.apache.xerces.dom.TextImpl;
 import org.odftoolkit.odfdom.doc.OdfDocument;
 import org.odftoolkit.odfdom.dom.OdfContentDom;
-import org.odftoolkit.odfdom.dom.element.number.NumberTextStyleElement;
 import org.odftoolkit.odfdom.dom.element.table.TableTableCellElement;
 import org.odftoolkit.odfdom.dom.element.table.TableTableElement;
 import org.odftoolkit.odfdom.dom.element.table.TableTableHeaderRowsElement;
 import org.odftoolkit.odfdom.dom.element.table.TableTableRowElement;
 import org.odftoolkit.odfdom.dom.element.text.*;
-import org.odftoolkit.odfdom.incubator.doc.style.OdfStyle;
 import org.odftoolkit.odfdom.incubator.doc.text.OdfTextHeading;
 import org.odftoolkit.odfdom.incubator.doc.text.OdfTextParagraph;
 import org.w3c.dom.Node;
@@ -21,6 +19,7 @@ import java.util.logging.Level;
 
 /**
  * Created by mvelezm on 14/04/16.
+ * Concrete implementation of ODFParser class for odt files
  */
 public class ODTParser extends ODFParser {
     private static final Logger log= Logger.getLogger( ODTParser.class.getName());
@@ -31,6 +30,7 @@ public class ODTParser extends ODFParser {
     private String[] textSplitted;
     private List<String> styleList;
 
+    //Static map with the word for table in each supported language
     private static final Map<String, String> tableMap;
     static {
         Map<String, String> aMap = new HashMap<String, String>();
@@ -40,6 +40,7 @@ public class ODTParser extends ODFParser {
         tableMap = Collections.unmodifiableMap(aMap);
     }
 
+    //Static map with the word for row in each supported language
     private static final Map<String, String> rowMap;
     static {
         Map<String, String> aMap = new HashMap<String, String>();
@@ -49,6 +50,7 @@ public class ODTParser extends ODFParser {
         rowMap = Collections.unmodifiableMap(aMap);
     }
 
+    //Static map with the word for cell in each supported language
     private static final Map<String, String> cellMap;
     static {
         Map<String, String> aMap = new HashMap<String, String>();
@@ -58,6 +60,7 @@ public class ODTParser extends ODFParser {
         cellMap = Collections.unmodifiableMap(aMap);
     }
 
+    //Static map with the word for header in each supported language
     private static final Map<String, String> headerMap;
     static {
         Map<String, String> aMap = new HashMap<String, String>();

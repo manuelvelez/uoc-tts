@@ -9,14 +9,14 @@ import javax.sound.sampled.AudioFileFormat.Type;
 import java.io.IOException;
 
 /**
- * Created by mvelezm on 18/04/16.
+ * Created by Manuel Vélez on 18/04/16.
+ * Manages the conversion of text to audio using freetts library
+ * This class is deprecated and is not used in the project
  */
+@Deprecated
 public class OffLineTTS extends TTS {
     @Override
     public void generateAudio(String language, String text, String filePath, String fileName) throws IOException {
-        /*System.setProperty("freetts.voices",
-                "com.sun.speech.freetts.en.us.cmu_us_kal.KevinVoiceDirectory");*/
-
         System.setProperty("freetts.voices",
                 "de.dfki.lt.freetts.en.us.MbrolaVoiceDirectory");
 

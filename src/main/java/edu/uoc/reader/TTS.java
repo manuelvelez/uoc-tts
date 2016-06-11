@@ -1,11 +1,11 @@
 package edu.uoc.reader;
 
 /**
- * Created by mvelezm on 22/03/16.
+ * Created by Manuel Vélez on 22/03/16.
+ * Abstract class that manages the TTS factory. This class is redefined in each implementation
  */
 
 import it.sauronsoftware.jave.EncoderException;
-
 import java.io.*;
 
 public abstract class TTS {

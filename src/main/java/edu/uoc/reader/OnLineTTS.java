@@ -9,7 +9,9 @@ import java.net.URL;
 import java.net.URLEncoder;
 
 /**
- * Created by mvelezm on 13/04/16.
+ * Created by Manuel Vélez on 13/04/16.
+ * Manages the conversion of text to audio using google tts service. As soon as this service works only with 100 chars
+ * strings, some preprocessing is needed.
  */
 public class OnLineTTS extends TTS {
     private static final Logger log= Logger.getLogger( OnLineTTS.class.getName());
@@ -22,7 +24,18 @@ public class OnLineTTS extends TTS {
         this.onlineTTSService = url;
     }
 
+    /**
+     * Convert text in text string to mp3 file using google tts service.
+     * @param language
+     * @param text
+     * @param filePath
+     * @param fileName
+     * @throws IOException
+     * @throws EncoderException
+     */
+
     public void generateAudio(String language, String text, String filePath, String fileName) throws IOException, EncoderException {
+        //Split the string into substrings with complete words and a total length smaller than 100 chars.
         String[] textSplitted = text.replaceAll("(.{0,"+ 100+"})\\b", "$1\n").split("\n");
 
         File output = new File(filePath + "/temp/"+ fileName+".mp3");

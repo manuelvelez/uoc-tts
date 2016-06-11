@@ -11,7 +11,6 @@ import org.odftoolkit.odfdom.doc.OdfTextDocument;
 import org.xml.sax.SAXException;
 
 import javax.swing.*;
-import javax.swing.border.Border;
 import javax.swing.filechooser.FileNameExtensionFilter;
 import javax.xml.parsers.ParserConfigurationException;
 import java.awt.*;
@@ -23,6 +22,7 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 
 /**
+ * This class manages the execution of the application in graphical user interface mode.
  * Created by mvelezm on 26/04/16.
  */
 public class GuiReader {
@@ -44,11 +44,22 @@ public class GuiReader {
 
     private static Config guiConfig;
 
-
+    /**
+     * Recives a text string and convert it to audio using the online provider
+     * @param text
+     * @throws IOException
+     * @throws EncoderException
+     */
     public static void doOnLineConversion (String text) throws IOException, EncoderException {
         new OnLineTTS(onlineTTSServiceUrl).generateAudio(guiConfig.getLanguage(), text, guiConfig.getOutputAudioPath(), guiConfig.getOutputAudioPattern());
     }
 
+    /**
+     * Recives an array of text strings and convert them to several audios using the online provider
+     * @param text
+     * @throws IOException
+     * @throws EncoderException
+     */
     public static void doOnLineConversion (String[] text) throws IOException, EncoderException {
         Integer i = 0;
         for (String subText: text) {
@@ -57,11 +68,24 @@ public class GuiReader {
             //doOnLineConversion(text);
         }
     }
-
+    /**
+     * Recives a text string and convert it to audio using the offline provider
+     * @param text
+     * @throws IOException
+     * @throws EncoderException
+     * @throws InterruptedException
+     */
     public static void doOfflineConversion (String text) throws IOException, EncoderException, InterruptedException {
         new EspeakTTS().generateAudio(guiConfig.getLanguage(), text, guiConfig.getOutputAudioPath(), guiConfig.getOutputAudioPattern());
     }
 
+    /**
+     * Recives an array of text strings and convert them to several audios using the online provider
+     * @param text
+     * @throws IOException
+     * @throws EncoderException
+     * @throws InterruptedException
+     */
     public static void doOfflineConversion (String[] text) throws IOException, EncoderException, InterruptedException {
         Integer i = 0;
         for (String subText: text) {
@@ -70,6 +94,11 @@ public class GuiReader {
         }
     }
 
+    /**
+     * Creates an array of strings from a string that contains PAGE-BREAK marks
+     * @param text
+     * @return
+     */
     public static String[] processText(String text) {
         String[] pages = new String [] {"Empty"};
         if (splitMode.equals("PAGE-BREAK")){
@@ -88,6 +117,10 @@ public class GuiReader {
     public void doTheConversion() {
 
     }
+
+    /**
+     * This method shows the main window and control the panels
+     */
     public static void showWindow() {
         JFrame frame = new JFrame("uoc-reader");
         frame.setSize(600, 250);
@@ -101,6 +134,10 @@ public class GuiReader {
         frame.setVisible(true);
     }
 
+    /**
+     * Place the components on the main panel
+     * @param panel
+     */
     private static void placeComponents(final JPanel panel) {
 
         panel.setLayout(null);
@@ -109,14 +146,17 @@ public class GuiReader {
         else
             currentDir = new File(System.getProperty("user.home"));
 
+        //Place the label for odf files.
         JLabel odfFileLabel = new JLabel("Odf File:");
         odfFileLabel.setBounds(10, 10, 80, 25);
         panel.add(odfFileLabel);
 
+        //Place the text component for odf file path.
         final JTextField odfTextField = new JTextField(200);
         odfTextField.setBounds(100, 10, 400, 25);
         panel.add(odfTextField);
 
+        //Open button for odfFile
         final JButton odfButton = new JButton("Open");
         odfButton.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
@@ -135,12 +175,13 @@ public class GuiReader {
         odfButton.setBounds(500, 10, 80, 25);
         panel.add(odfButton);
 
-
+        //Online checkbox
         final JCheckBox onlineCheckBox = new JCheckBox("Online processing");
         onlineCheckBox.setBounds(5, 70, 200, 25);
         onlineCheckBox.setEnabled(false);
         panel.add(onlineCheckBox);
 
+        //Language configuration box
         final JLabel languageLabel = new JLabel("Choose Language");
 
         final JRadioButton esRadioButton = new JRadioButton("Spanish");
@@ -169,6 +210,7 @@ public class GuiReader {
 
         panel.add(languagePanel);
 
+        //Split by strategy configuration box
         final JLabel splitLabel = new JLabel("Split-by strategy");
 
         final JRadioButton pageBreakRadioButton = new JRadioButton("Split by Pages");
@@ -194,17 +236,19 @@ public class GuiReader {
 
         panel.add(pagePanel);
 
+        //Place the label for config files.
         JLabel configLabel = new JLabel("Config File:");
         configLabel.setBounds(10, 40, 80, 25);
         panel.add(configLabel);
 
+        //Place the text component for config file path.
         final JTextField configTextField = new JTextField(200);
         configTextField.setBounds(100, 40, 400, 25);
         configTextField.setEditable(false);
         configTextField.setToolTipText("This text field is not editable and should be filled using the open button");
         panel.add(configTextField);
 
-
+        //Open button for config file.
         final JButton configButton = new JButton("Open");
         configButton.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
@@ -273,7 +317,7 @@ public class GuiReader {
 
 
 
-
+        //Start button component and action.
         JButton startButton = new JButton("Start");
         startButton.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {

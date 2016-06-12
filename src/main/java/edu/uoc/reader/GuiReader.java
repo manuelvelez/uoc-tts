@@ -101,7 +101,7 @@ public class GuiReader {
      */
     public static String[] processText(String text) {
         String[] pages = new String [] {"Empty"};
-        if (splitMode.equals("PAGE-BREAK")){
+        if (guiConfig.getSplitMode().equals("PAGE-BREAK")){
             pages = text.split("PAGE-BREAK-MARK");
         }
         else {
@@ -345,7 +345,7 @@ public class GuiReader {
 
                 if (pageBreakRadioButton.isSelected())
                     guiConfig.setSplitMode("PAGE-BREAK");
-                else
+                else if (singlePageRadiobutton.isSelected())
                     guiConfig.setSplitMode("UNIQUE");
 
                 try {

@@ -1,7 +1,7 @@
 #!/bin/bash
 
 DIR=$(dirname $0)
-JAVA_OPTS="-Dlog4j.configuration=file:./config/log4j.properties -Xms512m -Xmx2048m"
+JAVA_OPTS="-Dlog4j.configuration=file:./config/log4j.properties -Xms512m -Xmx1024m"
 
 ./espeak-linux/espeak --path=./espeak-linux -wtestFile.wav "hola"
 if [ $? -eq 0 ]
